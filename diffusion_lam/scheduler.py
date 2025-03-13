@@ -1,7 +1,12 @@
 import torch
 
 
-class WarmupCosineAnnealingLR(torch.optim.lr_scheduler.LRScheduler):
+class GraphcastScheduler(torch.optim.lr_scheduler.LRScheduler):
+    """
+    Scheduler from GraphCast: Learning skillful medium-range global weather forecasting
+    https://arxiv.org/abs/2212.12794
+    """
+
     def __init__(
         self,
         optimizer,
@@ -15,7 +20,7 @@ class WarmupCosineAnnealingLR(torch.optim.lr_scheduler.LRScheduler):
 
         assert (
             len(optimizer.param_groups) == 1
-        ), "WarmupCosineAnnealingLR only supports training with one parameter group"
+        ), "GraphcastScheduler only supports training with one parameter group"
         [param_group] = optimizer.param_groups
         initial_learning_rate = param_group["lr"]
 

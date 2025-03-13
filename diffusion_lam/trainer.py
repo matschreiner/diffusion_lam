@@ -31,7 +31,7 @@ class Trainer(pl.Trainer):
                 optimizer = get_default_optimizer(pl_module)
 
             if self.scheduler_config is not None:
-                scheduler = get_scheduler(self.scheduler_config, optimizer)
+                scheduler = get_scheduler(optimizer, self.scheduler_config)
                 return [optimizer], [scheduler]
 
             return optimizer
@@ -41,10 +41,16 @@ class Trainer(pl.Trainer):
 
 def get_optimizer(optimizer_config, pl_module):
     if optimizer_config is None:
-        return get_default_optimizer(pl_module)
+        torch.optim.AdamW
 
-    optimizer_cls = getattr(torch.optim, optimizer_config)
-    return optimizer_cls(pl_module.parameters())
+    optimizer_name = optimizer_config["optimizer"]
+    optimizer_kwargs = optimizer_config.get("kwargs", {})
+    optimizer_cls = getattr(torch.optim, optimizer_name, None)
+
+    if optimizer_cls is None:
+        raise ValueError(f"Unknown optimizer: {optimizer_config}")
+
+    return optimizer_cls(pl_module.parameters(), **optimizer_kwargs)
 
 
 def get_default_optimizer(pl_module):
@@ -53,16 +59,10 @@ def get_default_optimizer(pl_module):
 
 def get_scheduler(optimizer, scheduler_config):
     scheduler_name = scheduler_config["scheduler"]
-    if scheduler_name == "WarmupCosineAnnealingLR":
-        scheduler_cls = diffusion_lam.scheduler.WarmupCosineAnnealingLR
-    else:
-        scheduler_cls = getattr(torch.optim.lr_scheduler, scheduler_name)
+    scheduler_cls = getattr(torch.optim.lr_scheduler, scheduler_name, None)
+    if scheduler_cls is None:
+        scheduler_cls = getattr(diffusion_lam.scheduler, scheduler_config["scheduler"])
+    if scheduler_cls is None:
+        raise ValueError(f"Unknown scheduler: {scheduler_name}")
 
-    # TODO use this code when scheduler_config can be passed as a dict
-    #  scheduler_cls = getattr(
-    #      torch.optim.lr_scheduler, scheduler_config["scheduler"]
-    #  )
-    #  return scheduler_cls(optimizer, **scheduler_config["kwargs"])
-
-    scheduler_cls = getattr(torch.optim.lr_scheduler, scheduler_config)
-    return scheduler_cls(optimizer)
+    return scheduler_cls(optimizer, **scheduler_config["kwargs"])
