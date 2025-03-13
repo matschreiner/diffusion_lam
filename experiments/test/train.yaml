@@ -13,5 +13,20 @@ training:
     steps: 100
     batchsize: 32
 
+data:
+  datastore:
+    path: experiments/test/danra.datastore.yaml
+    type: mdp
+  standardize: True
+  ar_steps_train: 1
+  ar_steps_eval: 10
+  batch_size: 32
+  num_workers: 4
+  num_past_forcing_steps: 1
+  num_future_forcing_steps: 1
+  num_workers: 1
+
+
+
 
 
