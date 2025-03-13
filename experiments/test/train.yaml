@@ -17,7 +17,7 @@ data:
   standardize: True
   ar_steps_train: 1
   ar_steps_eval: 10
-  batch_size: 5
+  batch_size: 2
   num_workers: 4
   num_past_forcing_steps: 1
   num_future_forcing_steps: 1
