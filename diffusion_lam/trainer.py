@@ -31,6 +31,7 @@ class Trainer(pl.Trainer):
                 optimizer = get_default_optimizer(pl_module)
 
             if self.scheduler_config is not None:
+                optimizer = get_optimizer(self.optimizer_config, pl_module)
                 scheduler = get_scheduler(optimizer, self.scheduler_config)
                 return [optimizer], [scheduler]
 
@@ -43,7 +44,7 @@ def get_optimizer(optimizer_config, pl_module):
     if optimizer_config is None:
         torch.optim.AdamW
 
-    optimizer_name = optimizer_config["optimizer"]
+    optimizer_name = optimizer_config["name"]
     optimizer_kwargs = optimizer_config.get("kwargs", {})
     optimizer_cls = getattr(torch.optim, optimizer_name, None)
 
@@ -58,7 +59,7 @@ def get_default_optimizer(pl_module):
 
 
 def get_scheduler(optimizer, scheduler_config):
-    scheduler_name = scheduler_config["scheduler"]
+    scheduler_name = scheduler_config["name"]
     scheduler_cls = getattr(torch.optim.lr_scheduler, scheduler_name, None)
     if scheduler_cls is None:
         scheduler_cls = getattr(diffusion_lam.scheduler, scheduler_config["scheduler"])
