@@ -5,6 +5,11 @@ import torch
 
 import diffusion_lam
 
+DEFAULT_OPTIMIZER_CONFIG = {
+    "name": "AdamW",
+    "kwargs": {"lr": 0.001, "betas": (0.9, 0.95)},
+}
+
 
 class Trainer(pl.Trainer):
     def __init__(self, scheduler_config=None, optimizer_config=None, *args, **kwargs):
@@ -28,7 +33,7 @@ class Trainer(pl.Trainer):
 
         def configure_optimizers(pl_module):
             if self.optimizer_config is None:
-                optimizer = get_default_optimizer(pl_module)
+                self.optimizer_config = DEFAULT_OPTIMIZER_CONFIG
 
             if self.scheduler_config is not None:
                 optimizer = get_optimizer(self.optimizer_config, pl_module)
@@ -62,7 +67,7 @@ def get_scheduler(optimizer, scheduler_config):
     scheduler_name = scheduler_config["name"]
     scheduler_cls = getattr(torch.optim.lr_scheduler, scheduler_name, None)
     if scheduler_cls is None:
-        scheduler_cls = getattr(diffusion_lam.scheduler, scheduler_config["scheduler"])
+        scheduler_cls = getattr(diffusion_lam.scheduler, scheduler_name)
     if scheduler_cls is None:
         raise ValueError(f"Unknown scheduler: {scheduler_name}")
 
