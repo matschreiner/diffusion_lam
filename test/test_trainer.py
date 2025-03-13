@@ -33,7 +33,7 @@ def test_model_can_configure_optimizers(model):
 
 def test_can_instantiate_torch_optimizer(model):
     optimizer_config = {
-        "optimizer": "Adam",
+        "name": "Adam",
         "kwargs": {"lr": 0.01},
     }
 
@@ -44,7 +44,7 @@ def test_can_instantiate_torch_optimizer(model):
 
 def test_can_instantiate_torch_scheduler(optimizer):
     scheduler_config = {
-        "scheduler": "StepLR",
+        "name": "StepLR",
         "kwargs": {"step_size": 10, "gamma": 0.1},
     }
 
@@ -55,7 +55,7 @@ def test_can_instantiate_torch_scheduler(optimizer):
 
 
 GRAPHCAST_SCHEDULER_CONFIG = {
-    "scheduler": "GraphcastScheduler",
+    "name": "GraphcastScheduler",
     "kwargs": {
         "warmup_steps": 1000,
         "annealing_steps": 100000,
