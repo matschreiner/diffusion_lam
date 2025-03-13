@@ -1,6 +1,8 @@
 import pytest
 import torch
 
+from diffusion_lam import utils
+
 
 @pytest.fixture
 def model():
@@ -10,3 +12,8 @@ def model():
 @pytest.fixture
 def optimizer(model):
     return torch.optim.Adam(model.parameters())
+
+
+@pytest.fixture
+def batch():
+    return utils.load("test/resources/batch.pkl")
