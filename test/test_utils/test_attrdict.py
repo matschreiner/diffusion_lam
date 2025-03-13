@@ -1,6 +1,6 @@
 import pytest
 
-from diffusion_lam.utils.attr_dict import AttrDict
+from diffusion_lam.utils.attrdict import AttrDict
 
 
 @pytest.fixture
