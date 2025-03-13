@@ -1,18 +1,18 @@
 from neural_lam.datastore import DATASTORES
-from neural_lam.weather_dataset import WeatherDataModule
 
 from diffusion_lam import utils
+from diffusion_lam.data_module import WeatherDataModule
 from diffusion_lam.trainer import Trainer
 
 
 def main(config):
-
     trainer = Trainer(
         optimizer_config=config.training.optimizer,
         scheduler_config=config.training.scheduler,
     )
 
     datastore = DATASTORES[config.data.datastore.type](config.data.datastore.path)
+
     data_module = WeatherDataModule(
         datastore=datastore,
         ar_steps_train=config.data.ar_steps_train,
@@ -23,8 +23,6 @@ def main(config):
         batch_size=config.data.batch_size,
         num_workers=config.data.num_workers,
     )
-
-    __import__("pdb").set_trace()  # TODO delme
 
 
 if __name__ == "__main__":
