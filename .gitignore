@@ -1,3 +1,4 @@
-diffusion_lam/__pycache__
-diffusion_lam.egg-info
-test/__pycache__
+*__pycache__*
+*egg-info*
+*__pycache__*
+*.zarr
