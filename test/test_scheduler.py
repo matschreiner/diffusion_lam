@@ -1,6 +1,6 @@
 import numpy as np
 
-from diffusion_lam.scheduler import GraphcastScheduler
+from dlam.scheduler import GraphcastScheduler
 
 
 def test_warmup_cosine_annealing_produces_expected_schedule(optimizer):
