@@ -1,8 +1,10 @@
 from neural_lam.datastore import DATASTORES
 
-from diffusion_lam import utils
-from diffusion_lam.data_module import WeatherDataModule
-from diffusion_lam.trainer import Trainer
+from dlam import utils
+from dlam.data_module import WeatherDataModule
+from dlam.model.ddpm import DDPM
+from dlam.model.score_model import NaiveModel
+from dlam.trainer import Trainer
 
 
 def main(config):
@@ -23,6 +25,15 @@ def main(config):
         batch_size=config.data.batch_size,
         num_workers=config.data.num_workers,
     )
+
+    #  data_module.setup()
+    #  dataloader = data_module.train_dataloader()
+    __import__("pdb").set_trace()  # TODO delme
+
+    score_model = lambda x, _: x
+    model = DDPM(score_model)
+
+    trainer.fit(model, data_module)
 
 
 if __name__ == "__main__":
