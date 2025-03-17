@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 import torch
 
-from diffusion_lam.model import noise_schedule
+from dlam.model import noise_schedule
 
 
 class DDPM(pl.LightningModule):

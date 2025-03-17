@@ -3,7 +3,7 @@ from types import MethodType
 import pytorch_lightning as pl
 import torch
 
-import diffusion_lam
+import dlam
 
 DEFAULT_OPTIMIZER_CONFIG = {
     "name": "AdamW",
@@ -67,7 +67,7 @@ def get_scheduler(optimizer, scheduler_config):
     scheduler_name = scheduler_config["name"]
     scheduler_cls = getattr(torch.optim.lr_scheduler, scheduler_name, None)
     if scheduler_cls is None:
-        scheduler_cls = getattr(diffusion_lam.scheduler, scheduler_name)
+        scheduler_cls = getattr(dlam.scheduler, scheduler_name)
     if scheduler_cls is None:
         raise ValueError(f"Unknown scheduler: {scheduler_name}")
 

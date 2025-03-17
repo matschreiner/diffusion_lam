@@ -8,7 +8,7 @@ import torch
 import xarray as xr
 from neural_lam.datastore.base import BaseDatastore
 
-from diffusion_lam.utils.attrdict import AttrDict
+from dlam.utils.attrdict import AttrDict
 
 
 class WeatherDataset(torch.utils.data.Dataset):

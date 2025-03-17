@@ -1,1 +1,1 @@
-from diffusion_lam.utils.utils import *
+from dlam.utils.utils import *
