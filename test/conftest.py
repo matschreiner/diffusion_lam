@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from diffusion_lam import utils
+from dlam import utils
 
 
 @pytest.fixture
