@@ -1,0 +1,33 @@
+training:
+  optimizer: 
+    name: Adam
+    kwargs:
+      lr: 0.001
+      weight_decay: 0.0001
+  scheduler:
+    name: StepLR
+    kwargs: 
+      step_size: 30
+      gamma: 0.1
+
+data:
+  datastore:
+    path: experiments/test/danra.datastore.yaml
+    type: mdp
+  standardize: True
+  ar_steps_train: 1
+  ar_steps_eval: 10
+  batch_size: 2
+  num_workers: 4
+  num_past_forcing_steps: 1
+  num_future_forcing_steps: 1
+  num_workers: 1
+
+
+model:
+  graph: experiments/test/graph
+
+
+
+
+
