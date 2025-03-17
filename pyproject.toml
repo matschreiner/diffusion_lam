@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "diffusion_lam"
+name = "dlam"
 version = "0.1.0"
 description = "Diffusion LAM"
 authors = [{ name = "Mathias Schreiner", email = "matschreiner@gmail.com" }]
@@ -11,8 +11,10 @@ license = { text = "MIT" }
 dependencies = [
     "numpy",
     "torch",
+    "xarray",
+
 ]
 
 [tool.setuptools]
-packages = ["diffusion_lam"]
+packages = ["dlam"]
 
