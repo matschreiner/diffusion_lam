@@ -37,3 +37,19 @@ class NaiveModel(pl.LightningModule):
         tensor = tensor.permute(0, 2, 1, 3)
         shape = tensor.shape
         return tensor.reshape(shape[0], shape[1], -1)
+
+
+class NaiveScoreModel(NaiveModel):
+    def __init__(self):
+        super().__init__()
+        self.net = MLP(12, 11, 1)
+
+    def forward(self, x, t):
+        x = self.cat_t(x, t)
+        return super().forward(x)
+
+    def cat_t(self, x, t):
+        t = torch.ones_like(x.permute(3, 0, 1, 2)) * t
+        t.permute(1, 2, 3, 0)
+
+        return torch.cat([x, t], dim=-1)
