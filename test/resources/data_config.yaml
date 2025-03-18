@@ -12,4 +12,7 @@ iselection:
     end: 10
     step: 1
 
+
 path: "test/resources/example.zarr"
+variables: [u, v]
+
