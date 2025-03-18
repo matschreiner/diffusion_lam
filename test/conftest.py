@@ -17,3 +17,8 @@ def optimizer(model):
 @pytest.fixture
 def batch():
     return utils.load("test/resources/batch.pkl")
+
+
+@pytest.fixture
+def zarr_test_path():
+    return "test/resources/example.zarr"
