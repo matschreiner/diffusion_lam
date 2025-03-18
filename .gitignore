@@ -3,3 +3,5 @@
 *__pycache__*
 *.zarr
 lightning_logs
+!test/resources/example.zarr
+storage
