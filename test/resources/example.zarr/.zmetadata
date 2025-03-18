@@ -88,8 +88,8 @@
             "filters": null,
             "order": "C",
             "shape": [
-                20,
-                20
+                10,
+                10
             ],
             "zarr_format": 2
         },
@@ -119,8 +119,8 @@
             "filters": null,
             "order": "C",
             "shape": [
-                20,
-                20
+                10,
+                10
             ],
             "zarr_format": 2
         },
@@ -154,8 +154,8 @@
             "shape": [
                 24,
                 9,
-                20,
-                20
+                10,
+                10
             ],
             "zarr_format": 2
         },
@@ -201,8 +201,8 @@
             "shape": [
                 24,
                 9,
-                20,
-                20
+                10,
+                10
             ],
             "zarr_format": 2
         },
@@ -276,8 +276,8 @@
             "shape": [
                 24,
                 9,
-                20,
-                20
+                10,
+                10
             ],
             "zarr_format": 2
         },
@@ -323,8 +323,8 @@
             "shape": [
                 24,
                 9,
-                20,
-                20
+                10,
+                10
             ],
             "zarr_format": 2
         },
@@ -365,7 +365,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                20
+                10
             ],
             "zarr_format": 2
         },
@@ -393,7 +393,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                20
+                10
             ],
             "zarr_format": 2
         },

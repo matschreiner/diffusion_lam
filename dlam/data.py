@@ -13,19 +13,18 @@ from torch.utils.data import Dataset
 #  pprint(yaml_datastore)
 
 
-class Dataset(Dataset):
-    def __init__(self, selection={}, iselection{}):
+class WeatherDataset(Dataset):
+    def __init__(self, path, selection=None, iselection=None):
 
-        data = xr.open_zarr("storage/danra_sample/height_levels.zarr")
+        selection = selection or {}
+        iselection = iselection or {}
+
+        data = xr.open_zarr(path)
         data = data.sel(**selection)
         data = data.isel(**iselection)
         self.data = data
 
-        __import__("pdb").set_trace() #TODO delme kj:w
-
-        self.data = xr.open_zarr("storage/danra_sample/height_levels.zarr").isel(
-            **slicing
-        )
+        __import__("pdb").set_trace()  # TODO delme kj:w
 
     def stack_all(self, frame):
         variables = ["u", "v"]
@@ -49,10 +48,10 @@ class Dataset(Dataset):
         return frame
 
 
-ds = Dataset()
-
-for i in range(10):
-    for idx in range(len(ds)):
-        print(i, idx)
-        #  a = ds[idx]
-        #  print(a)
+#  ds = Dataset()
+#
+#  for i in range(10):
+#      for idx in range(len(ds)):
+#          print(i, idx)
+#          #  a = ds[idx]
+#          #  print(a)
