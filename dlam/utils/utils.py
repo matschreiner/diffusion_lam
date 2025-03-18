@@ -22,3 +22,8 @@ def save(obj, name):
 def load(name):
     with open(f"{name}", "rb") as f:
         return pkl.load(f)
+
+
+def load_yaml(path):
+    with open(path, "r") as file:
+        return AttrDict(yaml.safe_load(file))
