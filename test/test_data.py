@@ -1,44 +1,55 @@
+import yaml
+
+from dlam import utils
 from dlam.data import WeatherDataset
 
-RES_PATH = "storage/danra_sample/height_levels.zarr"
 
-import os
-import shutil
-
-import xarray as xr
-
-TEST_PATH = "storage/danra_sample/height_levels.zarr"
+def test_dataset_can_instantiate(zarr_test_path):
+    WeatherDataset(path=zarr_test_path)
 
 
-def test_load_and_save():
-    if os.path.exists(TEST_PATH):
-        shutil.rmtree(TEST_PATH)
-
-    d1 = xr.open_zarr(
-        "/dmidata/projects/cloudphysics/danra/data/v0.5.0/height_levels.zarr"
-    )
-    d1 = d1.isel(x=slice(0, 10), y=slice(0, 10), time=slice(0, 100))
-
-    d1.to_zarr(TEST_PATH, "w")
-    d2 = xr.open_zarr(TEST_PATH)
-    assert d1["u"].values.equals(d2["u"].values())
-
-
-RES_PATH = "storage/danra_sample/height_levels.zarr"
-
-
-def test_dataset_can_instantiate():
-    WeatherDataset(path=RES_PATH)
-
-
-def test_dataset_can_instantiate():
-    WeatherDataset(path=RES_PATH)
-
-
-def test_dataset_islice():
+def test_dataset_islice(zarr_test_path):
     iselection = {"x": slice(0, 5), "y": slice(0, 5), "time": slice(0, 5)}
-    dataset = WeatherDataset(path=RES_PATH, iselection=iselection)
-    shape = dataset.data["u"].values.shape
-    assert shape[0] == 5
-    assert shape[2] == 5
-    assert shape[3] == 5
+    dataset = WeatherDataset(path=zarr_test_path, iselection=iselection)
+    assert dataset.data["u"].values.shape == (5, 9, 5, 5)
+
+
+def test_dataset_slice(zarr_test_path):
+    selection = {"time": slice("1990-09-01", "1990-09-03"), "altitude": [30, 100]}
+    dataset = WeatherDataset(path=zarr_test_path, selection=selection)
+    assert dataset.data["u"].values.shape == (24, 2, 10, 10)
+
+
+def test_from_config():
+    config = utils.load_yaml("test/resources/data_config.yaml")
+    dataset = WeatherDataset(**config)
+    assert dataset.data["u"].values.shape == (10, 9, 5, 5)
+
+
+#  def test_get(zarr_test_path):
+#      dataset = WeatherDataset(path=zarr_test_path)
+#      d = dataset[0]
+#      __import__("pdb").set_trace()  # TODO delme
+
+
+def test_select_variables(zarr_test_path):
+    import xarray as xr
+
+    data = xr.open_zarr(zarr_test_path)
+    del data["danra_projection"]
+    data = data.isel(time=0)
+
+    state_feature = xr.concat([data["u"], data["v"]], dim="altitude")
+    data.stack(variables=["u", "v"], dim="altitude")
+
+    print(data.u.shape)
+    print(data.v.shape)
+    expected_shape = (
+        data["u"].shape[0] + data["v"].shape[0],
+        data["v"].shape[1],
+        data["v"].shape[2],
+    )
+    shape = state_feature.shape
+    __import__("pdb").set_trace()  # TODO delme
+
+    assert shape == expected_shape
