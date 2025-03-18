@@ -1,0 +1,15 @@
+iselection:
+  x: 
+    start: 0
+    end: 5 
+    step: 1
+  y: 
+    start: 0
+    end: 5 
+    step: 1
+  time:
+    start: 0
+    end: 10
+    step: 1
+
+path: "test/resources/example.zarr"

@@ -3,52 +3,38 @@ import torch
 import xarray as xr
 from torch.utils.data import Dataset
 
-#
-#  from torch
-#
-#  import yaml
-#
-#  datastore_path = "/home/masc/mllam/diffusion-lam/experiments/test/danra.datastore.yaml"
-#  yaml_datastore = yaml.safe_load(open(datastore_path, "r"))
-#  pprint(yaml_datastore)
-
 
 class WeatherDataset(Dataset):
-    def __init__(self, path, selection=None, iselection=None):
+    def __init__(self, path, selection=None, iselection=None, variables=None):
 
-        selection = selection or {}
-        iselection = iselection or {"x": slice(0, 10), "y": slice(0, 10)}
+        selection = get_slice(selection)
+        iselection = get_slice(iselection)
 
         data = xr.open_zarr(path)
         data = data.sel(**selection)
         data = data.isel(**iselection)
+
         self.data = data
-
-    def stack_all(self, frame):
-        variables = ["u", "v"]
-        stacked_vars = []
-
-        for var in variables:
-            data = frame[var]
-            feature_dims = data.dims[:-2]
-            stacked = data.stack(feature=feature_dims)
-
-            stacked_vars.append(stacked)
-        return xr.concat(stacked_vars, dim="feature")
+        self.variables = variables or list(data.data_vars)
 
     def __len__(self):
         return len(self.data.time)
 
     def __getitem__(self, idx):
-        frame = self.stack_all(frame)
+        frame = self.data.isel(time=idx)
+        frame.stack(features=self.variables)
+        frame.stacked(features=self.variables)
+        __import__("pdb").set_trace()  # TODO delme kj:w
 
-        return frame
+
+def dict_to_slice(d):
+    return slice(d.get("start", None), d.get("end", None), d.get("step", None))
 
 
-#  ds = Dataset()
-#
-#  for i in range(10):
-#      for idx in range(len(ds)):
-#          print(i, idx)
-#          #  a = ds[idx]
-#          #  print(a)
+def get_slice(selection):
+    if selection is None:
+        return {}
+
+    return {
+        k: dict_to_slice(v) if isinstance(v, dict) else v for k, v in selection.items()
+    }
