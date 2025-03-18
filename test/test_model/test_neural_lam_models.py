@@ -12,7 +12,6 @@
 #      }
 #
 #      ar_model = ARModel(**kwargs)
-#      __import__("pdb").set_trace()  # TODO delme kj;w
 
 
 #  num_state_vars = datastore.get_num_data_vars(category="state")
