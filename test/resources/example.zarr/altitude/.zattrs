@@ -1,0 +1,9 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "altitude"
+    ],
+    "axis": "Z",
+    "positive": "up",
+    "standard_name": "altitude",
+    "units": "m"
+}
