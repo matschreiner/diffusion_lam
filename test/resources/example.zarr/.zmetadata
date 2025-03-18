@@ -135,10 +135,10 @@
         },
         "r/.zarray": {
             "chunks": [
-                24,
-                9,
-                589,
-                789
+                256,
+                1,
+                295,
+                263
             ],
             "compressor": {
                 "blocksize": 0,
@@ -152,7 +152,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                24,
+                100,
                 9,
                 10,
                 10
@@ -182,10 +182,10 @@
         },
         "t/.zarray": {
             "chunks": [
-                24,
-                9,
-                589,
-                789
+                256,
+                1,
+                295,
+                263
             ],
             "compressor": {
                 "blocksize": 0,
@@ -199,7 +199,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                24,
+                100,
                 9,
                 10,
                 10
@@ -243,7 +243,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                24
+                100
             ],
             "zarr_format": 2
         },
@@ -257,10 +257,10 @@
         },
         "u/.zarray": {
             "chunks": [
-                24,
-                9,
-                589,
-                789
+                256,
+                1,
+                295,
+                263
             ],
             "compressor": {
                 "blocksize": 0,
@@ -274,7 +274,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                24,
+                100,
                 9,
                 10,
                 10
@@ -304,10 +304,10 @@
         },
         "v/.zarray": {
             "chunks": [
-                24,
-                9,
-                589,
-                789
+                256,
+                1,
+                295,
+                263
             ],
             "compressor": {
                 "blocksize": 0,
@@ -321,7 +321,7 @@
             "filters": null,
             "order": "C",
             "shape": [
-                24,
+                100,
                 9,
                 10,
                 10
