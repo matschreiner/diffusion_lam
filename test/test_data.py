@@ -20,36 +20,14 @@ def test_dataset_slice(zarr_test_path):
     assert dataset.data["u"].values.shape == (24, 2, 10, 10)
 
 
-def test_from_config():
-    config = utils.load_yaml("test/resources/data_config.yaml")
+def test_get_item(zarr_test_path):
+    variables = ["u", "v"]
+    dataset = WeatherDataset(zarr_test_path, variables=variables)
+    x = dataset.__getitem__(0)
+    assert x.shape == (18, 10, 10)
+
+
+def test_from_config(data_config_path):
+    config = utils.load_yaml(data_config_path)
     dataset = WeatherDataset(**config)
     assert dataset.data["u"].values.shape == (10, 9, 5, 5)
-
-
-#  def test_get(zarr_test_path):
-#      dataset = WeatherDataset(path=zarr_test_path)
-#      d = dataset[0]
-#      __import__("pdb").set_trace()  # TODO delme
-
-
-def test_select_variables(zarr_test_path):
-    import xarray as xr
-
-    data = xr.open_zarr(zarr_test_path)
-    del data["danra_projection"]
-    data = data.isel(time=0)
-
-    state_feature = xr.concat([data["u"], data["v"]], dim="altitude")
-    data.stack(variables=["u", "v"], dim="altitude")
-
-    print(data.u.shape)
-    print(data.v.shape)
-    expected_shape = (
-        data["u"].shape[0] + data["v"].shape[0],
-        data["v"].shape[1],
-        data["v"].shape[2],
-    )
-    shape = state_feature.shape
-    __import__("pdb").set_trace()  # TODO delme
-
-    assert shape == expected_shape
