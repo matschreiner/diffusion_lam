@@ -16,9 +16,12 @@ def test_load_and_save():
     )
     d1 = d1.isel(x=slice(0, 10), y=slice(0, 10), time=slice(0, 100))
 
+    del d1["danra_projection"]
+
     d1.to_zarr(TEST_PATH)
 
     d2 = xr.open_zarr(TEST_PATH)
+
     assert np.all(d1["u"].values == d2["u"].values)
 
 
