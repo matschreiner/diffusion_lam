@@ -28,7 +28,6 @@ def main(config):
 
     #  data_module.setup()
     #  dataloader = data_module.train_dataloader()
-    __import__("pdb").set_trace()  # TODO delme
 
     score_model = lambda x, _: x
     model = DDPM(score_model)
