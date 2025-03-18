@@ -22,3 +22,8 @@ def batch():
 @pytest.fixture
 def zarr_test_path():
     return "test/resources/example.zarr"
+
+
+@pytest.fixture
+def data_config_path():
+    return "test/resources/data_config.yaml"
