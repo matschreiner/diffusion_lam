@@ -2,23 +2,29 @@ from dlam.data import WeatherDataset
 
 RES_PATH = "storage/danra_sample/height_levels.zarr"
 
+import os
+import shutil
 
-#  import os
-#  import shutil
-#
-#  import xarray as xr
-#  def test_load_and_save():
-#      if os.path.exists(RES_PATH):
-#          shutil.rmtree(RES_PATH)
-#
-#      d1 = xr.open_zarr(
-#          "/dmidata/projects/cloudphysics/danra/data/v0.5.0/height_levels.zarr"
-#      )
-#      d1 = d1.isel(x=slice(0, 10), y=slice(0, 10), time=slice(0, 100))
-#
-#      d1.to_zarr(RES_PATH, "w")
-#      d2 = xr.open_zarr(RES_PATH)
-#      assert d1["u"].values.equals(d2["u"].values())
+import xarray as xr
+
+TEST_PATH = "storage/danra_sample/height_levels.zarr"
+
+
+def test_load_and_save():
+    if os.path.exists(TEST_PATH):
+        shutil.rmtree(TEST_PATH)
+
+    d1 = xr.open_zarr(
+        "/dmidata/projects/cloudphysics/danra/data/v0.5.0/height_levels.zarr"
+    )
+    d1 = d1.isel(x=slice(0, 10), y=slice(0, 10), time=slice(0, 100))
+
+    d1.to_zarr(TEST_PATH, "w")
+    d2 = xr.open_zarr(TEST_PATH)
+    assert d1["u"].values.equals(d2["u"].values())
+
+
+RES_PATH = "storage/danra_sample/height_levels.zarr"
 
 
 def test_dataset_can_instantiate():

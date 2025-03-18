@@ -17,14 +17,12 @@ class WeatherDataset(Dataset):
     def __init__(self, path, selection=None, iselection=None):
 
         selection = selection or {}
-        iselection = iselection or {}
+        iselection = iselection or {"x": slice(0, 10), "y": slice(0, 10)}
 
         data = xr.open_zarr(path)
         data = data.sel(**selection)
         data = data.isel(**iselection)
         self.data = data
-
-        __import__("pdb").set_trace()  # TODO delme kj:w
 
     def stack_all(self, frame):
         variables = ["u", "v"]
@@ -42,7 +40,6 @@ class WeatherDataset(Dataset):
         return len(self.data.time)
 
     def __getitem__(self, idx):
-        frame = self.data.isel(time=idx, **self.slicing)
         frame = self.stack_all(frame)
 
         return frame
