@@ -22,9 +22,12 @@ class WeatherDataset(Dataset):
 
     def __getitem__(self, idx):
         frame = self.data.isel(time=idx)
-        frame.stack(features=self.variables)
-        frame.stacked(features=self.variables)
-        __import__("pdb").set_trace()  # TODO delme kj:w
+
+        state_feature = xr.concat(
+            [frame[var] for var in self.variables], dim="altitude"
+        )
+
+        return torch.Tensor(state_feature.values)
 
 
 def dict_to_slice(d):
