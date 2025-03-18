@@ -2,8 +2,11 @@ import torch
 
 
 class MLP(torch.nn.Module):
-    def __init__(self, input_dim, output_dim, hidden_dim, num_hidden):
+    def __init__(self, input_dim, output_dim, hidden_dim=None, num_hidden=1):
         super().__init__()
+
+        if hidden_dim is None:
+            hidden_dim = output_dim
 
         modules = [torch.nn.Linear(input_dim, hidden_dim)]
 
