@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "pressure",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level_type": "isobaricInhPa",
+    "long_name": "Geopotential",
+    "paramId": 233253006,
+    "shortName": "z",
+    "standard_name": "geopotential",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "isobaricInhPa",
+    "units": "m**2 s**-2",
+    "uvRelativeToGrid": 1
+}

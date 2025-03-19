@@ -1,0 +1,1505 @@
+{
+    "metadata": {
+        ".zattrs": {
+            "Conventions": "CF-1.8",
+            "contact": "Leif Denby <lcd@dmi.dk>, Danish Meteorological Institute",
+            "description": "All prognostic variables for 1990-09-01T00:00Z to 2024-01-01T00:00Z on all levels",
+            "license": "CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/"
+        },
+        ".zgroup": {
+            "zarr_format": 2
+        },
+        "cape_column/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "cape_column/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": [
+                0
+            ],
+            "level_type": "entireAtmosphere",
+            "long_name": "CAPE out of the model",
+            "paramId": 233253160,
+            "shortName": "cape",
+            "standard_name": "atmosphere_convective_available_potential_energy_wrt_surface",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "entireAtmosphere",
+            "units": "J kg-1",
+            "uvRelativeToGrid": 1
+        },
+        "cb_column/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "cb_column/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": [
+                0
+            ],
+            "level_type": "entireAtmosphere",
+            "long_name": "Cloud base",
+            "paramId": 233253186,
+            "shortName": "cb",
+            "standard_name": "cloud_base_altitude",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "entireAtmosphere",
+            "units": "m",
+            "uvRelativeToGrid": 1
+        },
+        "ct_column/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "ct_column/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": [
+                0
+            ],
+            "level_type": "entireAtmosphere",
+            "long_name": "Cloud top",
+            "paramId": 233253187,
+            "shortName": "ct",
+            "standard_name": "cloud_top_altitude",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "entireAtmosphere",
+            "units": "m",
+            "uvRelativeToGrid": 1
+        },
+        "grpl_column/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "grpl_column/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": [
+                0
+            ],
+            "level_type": "entireAtmosphere",
+            "long_name": "Graupel",
+            "paramId": 233253201,
+            "shortName": "grpl",
+            "standard_name": "atmosphere_mass_content_of_graupel",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "entireAtmosphere",
+            "units": "kg m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "hcc0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "hcc0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "High cloud cover",
+            "paramId": 233253075,
+            "shortName": "hcc",
+            "standard_name": "high_type_cloud_area_fraction",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "1",
+            "uvRelativeToGrid": 1
+        },
+        "icei0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "icei0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Icing index",
+            "paramId": 233253135,
+            "shortName": "icei",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "-",
+            "uvRelativeToGrid": 1
+        },
+        "lat/.zarray": {
+            "chunks": [
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lat/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y",
+                "x"
+            ],
+            "long_name": "latitude",
+            "standard_name": "latitude",
+            "units": "degrees_north"
+        },
+        "lcc0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lcc0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Low cloud cover",
+            "paramId": 233253073,
+            "shortName": "lcc",
+            "standard_name": "low_type_cloud_area_fraction",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "1",
+            "uvRelativeToGrid": 1
+        },
+        "lon/.zarray": {
+            "chunks": [
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lon/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y",
+                "x"
+            ],
+            "long_name": "longitude",
+            "standard_name": "longitude",
+            "units": "degrees_east"
+        },
+        "lsm/.zarray": {
+            "chunks": [
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": 3.4028234663852886e+38,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lsm/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y",
+                "x"
+            ],
+            "coordinates": "lon lat",
+            "data_kind": "CONSTANTS",
+            "grid_mapping": "danra_projection",
+            "level_type": "CONSTANTS",
+            "long_name": "Land cover (1=land, 0=sea)",
+            "paramId": 233253081,
+            "shortName": "lsm",
+            "standard_name": "land_binary_mask",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "1",
+            "uvRelativeToGrid": 1
+        },
+        "lwavr0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lwavr0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Long-wave radiation flux",
+            "paramId": 233253115,
+            "shortName": "lwavr",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "W m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "mcc0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "mcc0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Medium cloud cover",
+            "paramId": 233253074,
+            "shortName": "mcc",
+            "standard_name": "medium_type_cloud_area_fraction",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "1",
+            "uvRelativeToGrid": 1
+        },
+        "mld0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "mld0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Mixed layer depth",
+            "paramId": 233253067,
+            "shortName": "mld",
+            "standard_name": "atmosphere_boundary_layer_thickness",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "m",
+            "uvRelativeToGrid": 1
+        },
+        "orography/.zarray": {
+            "chunks": [
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": 3.4028234663852886e+38,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "orography/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y",
+                "x"
+            ],
+            "coordinates": "lon lat",
+            "data_kind": "CONSTANTS",
+            "grid_mapping": "danra_projection",
+            "level_type": "CONSTANTS",
+            "long_name": "Geopotential",
+            "paramId": 233253006,
+            "shortName": "z",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "m**2 s**-2",
+            "uvRelativeToGrid": 1
+        },
+        "pres0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "pres0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Pressure",
+            "paramId": 233253001,
+            "shortName": "pres",
+            "standard_name": "air_pressure",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "Pa",
+            "uvRelativeToGrid": 1
+        },
+        "pres_seasurface/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "pres_seasurface/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": [
+                0
+            ],
+            "level_type": "heightAboveSea",
+            "long_name": "Pressure",
+            "paramId": 233253001,
+            "shortName": "pres",
+            "standard_name": "air_pressure_at_mean_sea_level",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveSea",
+            "units": "Pa",
+            "uvRelativeToGrid": 1
+        },
+        "prtp0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "prtp0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Precipitation Type",
+            "paramId": 233253144,
+            "shortName": "prtp",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "-",
+            "uvRelativeToGrid": 1
+        },
+        "psct0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "psct0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Pseudo satellite image: cloud top temperature (infrared)",
+            "paramId": 233253136,
+            "shortName": "psct",
+            "standard_name": "brightness_temperature_at_cloud_top",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "K",
+            "uvRelativeToGrid": 1
+        },
+        "pscw0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "pscw0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Pseudo satellite image: cloud water reflectivity (visible)",
+            "paramId": 233253139,
+            "shortName": "pscw",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "-",
+            "uvRelativeToGrid": 1
+        },
+        "pstb0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "pstb0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Pseudo satellite image: water vapour Tb",
+            "paramId": 233253137,
+            "shortName": "pstb",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "-",
+            "uvRelativeToGrid": 1
+        },
+        "pstbc0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "pstbc0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Pseudo satellite image: water vapour Tb + correction for clouds",
+            "paramId": 233253138,
+            "shortName": "pstbc",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "-",
+            "uvRelativeToGrid": 1
+        },
+        "pwat_column/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "pwat_column/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": [
+                0
+            ],
+            "level_type": "entireAtmosphere",
+            "long_name": "Precipitable water",
+            "paramId": 233253054,
+            "shortName": "pwat",
+            "standard_name": "atmosphere_mass_content_of_water_vapor",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "entireAtmosphere",
+            "units": "kg m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "r2m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "r2m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 2,
+            "level_type": "heightAboveGround",
+            "long_name": "Relative humidity",
+            "paramId": 233253052,
+            "shortName": "r",
+            "standard_name": "relative_humidity",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "%",
+            "uvRelativeToGrid": 1
+        },
+        "sf0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "sf0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Water equivalent of accumulated snow depth",
+            "paramId": 233253065,
+            "shortName": "sf",
+            "standard_name": "snowfall_amount",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "kg m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "swavr0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "swavr0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Short-wave radiation flux",
+            "paramId": 233253116,
+            "shortName": "swavr",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "W m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "t0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "t0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Temperature",
+            "paramId": 233253011,
+            "shortName": "t",
+            "standard_name": "air_temperature",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "K",
+            "uvRelativeToGrid": 1
+        },
+        "t2m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "t2m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 2,
+            "level_type": "heightAboveGround",
+            "long_name": "Temperature",
+            "paramId": 233253011,
+            "shortName": "t",
+            "standard_name": "air_temperature",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "K",
+            "uvRelativeToGrid": 1
+        },
+        "tcc0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "tcc0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Total cloud cover",
+            "paramId": 233253071,
+            "shortName": "tcc",
+            "standard_name": "cloud_area_fraction",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "1",
+            "uvRelativeToGrid": 1
+        },
+        "time/.zarray": {
+            "chunks": [
+                24192
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100
+            ],
+            "zarr_format": 2
+        },
+        "time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time"
+            ],
+            "calendar": "proleptic_gregorian",
+            "standard_name": "time",
+            "units": "hours since 1990-09-01"
+        },
+        "u10m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "u10m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 10,
+            "level_type": "heightAboveGround",
+            "long_name": "u-component of wind",
+            "paramId": 233253033,
+            "shortName": "u",
+            "standard_name": "x_wind",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "m s**-1",
+            "uvRelativeToGrid": 1
+        },
+        "v10m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "v10m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 10,
+            "level_type": "heightAboveGround",
+            "long_name": "v-component of wind",
+            "paramId": 233253034,
+            "shortName": "v",
+            "standard_name": "y_wind",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "m s**-1",
+            "uvRelativeToGrid": 1
+        },
+        "vis0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "vis0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "Visibility",
+            "paramId": 233253020,
+            "shortName": "vis",
+            "standard_name": "visibility_in_air",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "m",
+            "uvRelativeToGrid": 1
+        },
+        "x/.zarray": {
+            "chunks": [
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10
+            ],
+            "zarr_format": 2
+        },
+        "x/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "x"
+            ],
+            "axis": "X",
+            "standard_name": "projection_x_coordinate",
+            "units": "m"
+        },
+        "xhail0m/.zarray": {
+            "chunks": [
+                256,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "xhail0m/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level": 0,
+            "level_type": "heightAboveGround",
+            "long_name": "AROME hail diagnostic",
+            "paramId": 233253161,
+            "shortName": "xhail",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "heightAboveGround",
+            "units": "kg m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "y/.zarray": {
+            "chunks": [
+                295
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10
+            ],
+            "zarr_format": 2
+        },
+        "y/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y"
+            ],
+            "axis": "Y",
+            "standard_name": "projection_y_coordinate",
+            "units": "m"
+        }
+    },
+    "zarr_consolidated_format": 1
+}

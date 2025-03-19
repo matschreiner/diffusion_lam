@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 2,
+    "level_type": "heightAboveGround",
+    "long_name": "Relative humidity",
+    "paramId": 233253052,
+    "shortName": "r",
+    "standard_name": "relative_humidity",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "%",
+    "uvRelativeToGrid": 1
+}

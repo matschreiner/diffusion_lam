@@ -1,0 +1,20 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 0,
+    "level_type": "heightAboveGround",
+    "long_name": "Precipitation Type",
+    "paramId": 233253144,
+    "shortName": "prtp",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "-",
+    "uvRelativeToGrid": 1
+}

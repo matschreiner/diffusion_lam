@@ -1,0 +1,20 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 0,
+    "level_type": "heightAboveGround",
+    "long_name": "AROME hail diagnostic",
+    "paramId": 233253161,
+    "shortName": "xhail",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "kg m**-2",
+    "uvRelativeToGrid": 1
+}

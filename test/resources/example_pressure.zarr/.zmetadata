@@ -1,0 +1,564 @@
+{
+    "metadata": {
+        ".zattrs": {
+            "Conventions": "CF-1.8",
+            "contact": "Leif Denby <lcd@dmi.dk>, Danish Meteorological Institute",
+            "description": "All prognostic variables for 1990-09-01T00:00Z to 2024-01-01T00:00Z on all levels",
+            "license": "CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/"
+        },
+        ".zgroup": {
+            "zarr_format": 2
+        },
+        "ciwc/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "ciwc/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "Cloud ice",
+            "paramId": 233253058,
+            "shortName": "ciwc",
+            "standard_name": "atmosphere_mass_content_of_cloud_ice",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "kg m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "cwat/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "cwat/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "Cloud water",
+            "paramId": 233253076,
+            "shortName": "cwat",
+            "standard_name": "atmosphere_mass_content_of_cloud_liquid_water",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "kg m**-2",
+            "uvRelativeToGrid": 1
+        },
+        "lat/.zarray": {
+            "chunks": [
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lat/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y",
+                "x"
+            ],
+            "long_name": "latitude",
+            "standard_name": "latitude",
+            "units": "degrees_north"
+        },
+        "lon/.zarray": {
+            "chunks": [
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "lon/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y",
+                "x"
+            ],
+            "long_name": "longitude",
+            "standard_name": "longitude",
+            "units": "degrees_east"
+        },
+        "pressure/.zarray": {
+            "chunks": [
+                14
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                14
+            ],
+            "zarr_format": 2
+        },
+        "pressure/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "pressure"
+            ],
+            "axis": "Z",
+            "standard_name": "air_pressure",
+            "units": "hPa"
+        },
+        "r/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "r/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "Relative humidity",
+            "paramId": 233253052,
+            "shortName": "r",
+            "standard_name": "relative_humidity",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "%",
+            "uvRelativeToGrid": 1
+        },
+        "t/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "t/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "Temperature",
+            "paramId": 233253011,
+            "shortName": "t",
+            "standard_name": "air_temperature",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "K",
+            "uvRelativeToGrid": 1
+        },
+        "time/.zarray": {
+            "chunks": [
+                24192
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100
+            ],
+            "zarr_format": 2
+        },
+        "time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time"
+            ],
+            "calendar": "proleptic_gregorian",
+            "standard_name": "time",
+            "units": "hours since 1990-09-01"
+        },
+        "tw/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "tw/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "Vertical velocity",
+            "paramId": 233253040,
+            "shortName": "tw",
+            "standard_name": "upward_air_velocity",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "m s**-1",
+            "uvRelativeToGrid": 1
+        },
+        "u/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "u/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "u-component of wind",
+            "paramId": 233253033,
+            "shortName": "u",
+            "standard_name": "x_wind",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "m s**-1",
+            "uvRelativeToGrid": 1
+        },
+        "v/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "v/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "v-component of wind",
+            "paramId": 233253034,
+            "shortName": "v",
+            "standard_name": "y_wind",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "m s**-1",
+            "uvRelativeToGrid": 1
+        },
+        "x/.zarray": {
+            "chunks": [
+                789
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10
+            ],
+            "zarr_format": 2
+        },
+        "x/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "x"
+            ],
+            "axis": "X",
+            "standard_name": "projection_x_coordinate",
+            "units": "m"
+        },
+        "y/.zarray": {
+            "chunks": [
+                589
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                10
+            ],
+            "zarr_format": 2
+        },
+        "y/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "y"
+            ],
+            "axis": "Y",
+            "standard_name": "projection_y_coordinate",
+            "units": "m"
+        },
+        "z/.zarray": {
+            "chunks": [
+                256,
+                1,
+                295,
+                263
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                100,
+                14,
+                10,
+                10
+            ],
+            "zarr_format": 2
+        },
+        "z/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "time",
+                "pressure",
+                "y",
+                "x"
+            ],
+            "coordinates": "lat lon",
+            "data_kind": "ANALYSIS",
+            "grid_mapping": "danra_projection",
+            "level_type": "isobaricInhPa",
+            "long_name": "Geopotential",
+            "paramId": 233253006,
+            "shortName": "z",
+            "standard_name": "geopotential",
+            "stepType": "instant",
+            "stepUnits": 1,
+            "typeOfLevel": "isobaricInhPa",
+            "units": "m**2 s**-2",
+            "uvRelativeToGrid": 1
+        }
+    },
+    "zarr_consolidated_format": 1
+}

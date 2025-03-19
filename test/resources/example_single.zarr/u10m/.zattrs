@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 10,
+    "level_type": "heightAboveGround",
+    "long_name": "u-component of wind",
+    "paramId": 233253033,
+    "shortName": "u",
+    "standard_name": "x_wind",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "m s**-1",
+    "uvRelativeToGrid": 1
+}

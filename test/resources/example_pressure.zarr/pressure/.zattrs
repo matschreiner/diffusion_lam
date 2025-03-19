@@ -1,0 +1,8 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "pressure"
+    ],
+    "axis": "Z",
+    "standard_name": "air_pressure",
+    "units": "hPa"
+}

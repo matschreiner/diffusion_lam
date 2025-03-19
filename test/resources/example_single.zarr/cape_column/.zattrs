@@ -1,0 +1,23 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": [
+        0
+    ],
+    "level_type": "entireAtmosphere",
+    "long_name": "CAPE out of the model",
+    "paramId": 233253160,
+    "shortName": "cape",
+    "standard_name": "atmosphere_convective_available_potential_energy_wrt_surface",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "entireAtmosphere",
+    "units": "J kg-1",
+    "uvRelativeToGrid": 1
+}

@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 0,
+    "level_type": "heightAboveGround",
+    "long_name": "Water equivalent of accumulated snow depth",
+    "paramId": 233253065,
+    "shortName": "sf",
+    "standard_name": "snowfall_amount",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "kg m**-2",
+    "uvRelativeToGrid": 1
+}

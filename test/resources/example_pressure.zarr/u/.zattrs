@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "pressure",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level_type": "isobaricInhPa",
+    "long_name": "u-component of wind",
+    "paramId": 233253033,
+    "shortName": "u",
+    "standard_name": "x_wind",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "isobaricInhPa",
+    "units": "m s**-1",
+    "uvRelativeToGrid": 1
+}

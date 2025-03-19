@@ -1,0 +1,20 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 0,
+    "level_type": "heightAboveGround",
+    "long_name": "Short-wave radiation flux",
+    "paramId": 233253116,
+    "shortName": "swavr",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "W m**-2",
+    "uvRelativeToGrid": 1
+}

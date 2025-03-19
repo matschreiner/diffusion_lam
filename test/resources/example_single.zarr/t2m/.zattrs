@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 2,
+    "level_type": "heightAboveGround",
+    "long_name": "Temperature",
+    "paramId": 233253011,
+    "shortName": "t",
+    "standard_name": "air_temperature",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "K",
+    "uvRelativeToGrid": 1
+}

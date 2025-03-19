@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": 0,
+    "level_type": "heightAboveGround",
+    "long_name": "Pseudo satellite image: cloud top temperature (infrared)",
+    "paramId": 233253136,
+    "shortName": "psct",
+    "standard_name": "brightness_temperature_at_cloud_top",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "K",
+    "uvRelativeToGrid": 1
+}

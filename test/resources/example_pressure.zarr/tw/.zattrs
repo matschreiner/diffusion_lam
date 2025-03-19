@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "pressure",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level_type": "isobaricInhPa",
+    "long_name": "Vertical velocity",
+    "paramId": 233253040,
+    "shortName": "tw",
+    "standard_name": "upward_air_velocity",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "isobaricInhPa",
+    "units": "m s**-1",
+    "uvRelativeToGrid": 1
+}

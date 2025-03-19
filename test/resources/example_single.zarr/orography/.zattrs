@@ -1,0 +1,18 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "y",
+        "x"
+    ],
+    "coordinates": "lon lat",
+    "data_kind": "CONSTANTS",
+    "grid_mapping": "danra_projection",
+    "level_type": "CONSTANTS",
+    "long_name": "Geopotential",
+    "paramId": 233253006,
+    "shortName": "z",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "m**2 s**-2",
+    "uvRelativeToGrid": 1
+}

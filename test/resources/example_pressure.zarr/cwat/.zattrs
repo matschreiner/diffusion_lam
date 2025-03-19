@@ -1,0 +1,21 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "pressure",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level_type": "isobaricInhPa",
+    "long_name": "Cloud water",
+    "paramId": 233253076,
+    "shortName": "cwat",
+    "standard_name": "atmosphere_mass_content_of_cloud_liquid_water",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "isobaricInhPa",
+    "units": "kg m**-2",
+    "uvRelativeToGrid": 1
+}

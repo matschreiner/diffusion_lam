@@ -1,0 +1,23 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time",
+        "y",
+        "x"
+    ],
+    "coordinates": "lat lon",
+    "data_kind": "ANALYSIS",
+    "grid_mapping": "danra_projection",
+    "level": [
+        0
+    ],
+    "level_type": "entireAtmosphere",
+    "long_name": "Cloud top",
+    "paramId": 233253187,
+    "shortName": "ct",
+    "standard_name": "cloud_top_altitude",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "entireAtmosphere",
+    "units": "m",
+    "uvRelativeToGrid": 1
+}

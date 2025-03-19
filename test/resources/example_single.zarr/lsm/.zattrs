@@ -1,0 +1,19 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "y",
+        "x"
+    ],
+    "coordinates": "lon lat",
+    "data_kind": "CONSTANTS",
+    "grid_mapping": "danra_projection",
+    "level_type": "CONSTANTS",
+    "long_name": "Land cover (1=land, 0=sea)",
+    "paramId": 233253081,
+    "shortName": "lsm",
+    "standard_name": "land_binary_mask",
+    "stepType": "instant",
+    "stepUnits": 1,
+    "typeOfLevel": "heightAboveGround",
+    "units": "1",
+    "uvRelativeToGrid": 1
+}
