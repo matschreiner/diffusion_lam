@@ -1,6 +1,0 @@
-{
-    "Conventions": "CF-1.8",
-    "contact": "Leif Denby <lcd@dmi.dk>, Danish Meteorological Institute",
-    "description": "All prognostic variables for 1990-09-01T00:00Z to 2024-01-01T00:00Z on all levels",
-    "license": "CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/"
-}
