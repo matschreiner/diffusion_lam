@@ -3,5 +3,8 @@
 *__pycache__*
 *.zarr
 lightning_logs
-!test/resources/example.zarr
 storage
+
+!test/resources/example_heights.zarr
+!test/resources/example_pressure.zarr
+!test/resources/example_single.zarr
