@@ -5,6 +5,4 @@
 lightning_logs
 storage
 
-!test/resources/example_heights.zarr
-!test/resources/example_pressure.zarr
-!test/resources/example_single.zarr
+!test/resources/*
