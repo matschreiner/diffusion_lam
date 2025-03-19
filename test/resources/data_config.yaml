@@ -14,5 +14,7 @@ iselection:
 
 inputs:
   - path: test/resources/example_height.zarr/
-    feature: altitude
-    scalar_features: ["u", "v"]
+    stacking_dims: [altitude]
+    features: ["u", "v"]
+  # - path: test/resources/example_single.zarr/
+  #   features: ["lsm", "t2m"]

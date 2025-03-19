@@ -20,10 +20,10 @@ def batch():
 
 
 @pytest.fixture
-def zarr_test_path():
-    return "test/resources/example.zarr"
+def test_input():
+    return {"path": "test/resources/example_height.zarr", "feature": "altitude"}
 
 
 @pytest.fixture
-def data_config_path():
-    return "test/resources/data_config.yaml"
+def data_config():
+    return utils.load_yaml("test/resources/data_config.yaml")
