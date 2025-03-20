@@ -1,17 +1,25 @@
+import pytest
 import yaml
 
 from dlam import utils
 from dlam.data import WeatherDataset
 
 
-def test_dataset_can_instantiate(zarr_test_path):
-    WeatherDataset(inputs=zarr_test_path)
+@pytest.fixture
+def data_config():
+    return {
+        "static": [{"path": "test/resources/example_single.zarr", "features": ["t2m"]}]
+    }
 
 
-def test_dataset_islice(test_input):
-    iselection = {"x": slice(0, 5), "y": slice(0, 5), "time": slice(0, 5)}
-    dataset = WeatherDataset(inputs=test_input, iselection=iselection)
-    assert dataset.data["u"].values.shape == (5, 9, 5, 5)
+def test_dataset_can_instantiate(data_config):
+    WeatherDataset(data_config)
+
+
+def test_dataset_islice(data_config):
+    iselection = {"x": slice(0, 5), "y": slice(0, 7)}
+    dataset = WeatherDataset(data_config, iselection=iselection)
+    assert dataset[0].pos.shape == (35, 2)
 
 
 def test_dataset_slice(test_input):
@@ -28,7 +36,9 @@ def test_get_item(data_config):
 
 def test_from_config(data_config):
     dataset = WeatherDataset(**data_config)
-    assert dataset.data["u"].values.shape == (18, 9, 5, 5)
+    batch = dataset[0]
+    assert batch.state.shape == (25, 20)
+    assert batch.static.shape == (25, 2)
 
 
 def test_single_levels_data():

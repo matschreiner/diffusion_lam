@@ -11,17 +11,35 @@ class WeatherDataset(Dataset):
 
         self.ds_dict = {}
         for ds_name, ds_config in data.items():
-            self.ds_dict[ds_name] = create_ds(ds_config, selection, iselection)
+
+            ds = read_configs(ds_config)
+
+            selection = get_slice(selection)
+            iselection = get_slice(iselection)
+
+            selection = {k: v for k, v in selection.items() if k in ds.dims}
+            iselection = {k: v for k, v in iselection.items() if k in ds.dims}
+
+            ds = ds.sel(**selection)
+            ds = ds.isel(**iselection)
+
+            if "time" in ds:
+                self.time = ds.time
+
+            self.ds_dict[ds_name] = ds
 
     def __len__(self):
-        return len(self.data.time)
+        return len(self.time)
 
     def __getitem__(self, idx):
+        time = self.time[idx]
+
         batch = utils.AttrDict()
+        batch.time = torch.tensor(time.values.item() / 1e9)
 
         for feature, ds in self.ds_dict.items():
             if "time" in ds.dims:
-                ds = ds.isel(time=idx)
+                ds = ds.sel(time=time)
 
             stacked = ds.stack(node=("x", "y")).features.transpose(
                 "node", "feature_dim"
@@ -35,21 +53,6 @@ class WeatherDataset(Dataset):
         batch["pos"] = torch.tensor(pos.values)
 
         return batch
-
-
-def create_ds(config, selection, iselection):
-    ds = read_configs(config)
-
-    selection = get_slice(selection)
-    iselection = get_slice(iselection)
-
-    selection = {k: v for k, v in selection.items() if k in ds.dims}
-    iselection = {k: v for k, v in iselection.items() if k in ds.dims}
-
-    ds = ds.sel(**selection)
-    ds = ds.isel(**iselection)
-
-    return ds
 
 
 def read_configs(inputs):

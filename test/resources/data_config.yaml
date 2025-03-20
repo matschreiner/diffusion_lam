@@ -12,9 +12,13 @@ iselection:
     end: 10
     step: 1
 
-inputs:
-  - path: test/resources/example_height.zarr/
-    stacking_dims: [altitude]
-    features: ["u", "v"]
-  # - path: test/resources/example_single.zarr/
-  #   features: ["lsm", "t2m"]
+data:
+  state:
+    - path: test/resources/example_height.zarr/
+      stacking_dim: "altitude"
+      features: ["u", "v"]
+    - path: test/resources/example_single.zarr/
+      features: ["t2m", "v10m"]
+  static:
+    - path: test/resources/example_single.zarr/
+      features: ["orography", "lsm"]
