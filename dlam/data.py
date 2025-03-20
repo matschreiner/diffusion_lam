@@ -2,45 +2,78 @@ import torch
 import xarray as xr
 from torch.utils.data import Dataset
 
+from dlam import utils
+
 
 class WeatherDataset(Dataset):
-    def __init__(self, inputs, selection=None, iselection=None):
-        data = read_inputs(inputs)
+    def __init__(self, data, selection=None, iselection=None, coords=None):
+        self.coords = coords or ["x", "y"]
 
-        selection = get_slice(selection)
-        iselection = get_slice(iselection)
-
-        data = data.sel(**selection)
-        data = data.isel(**iselection)
-
-        self.data = data
+        self.ds_dict = {}
+        for ds_name, ds_config in data.items():
+            self.ds_dict[ds_name] = create_ds(ds_config, selection, iselection)
 
     def __len__(self):
         return len(self.data.time)
 
     def __getitem__(self, idx):
-        frame = self.data.isel(time=idx)
-        return torch.Tensor(state_feature.values)
+        batch = utils.AttrDict()
+
+        for feature, ds in self.ds_dict.items():
+            if "time" in ds.dims:
+                ds = ds.isel(time=idx)
+
+            stacked = ds.stack(node=("x", "y")).features.transpose(
+                "node", "feature_dim"
+            )
+
+            batch[feature] = torch.tensor(stacked.values)
+
+        pos = xr.concat(
+            [stacked.coords[coord] for coord in self.coords], dim="coord"
+        ).transpose("node", "coord")
+        batch["pos"] = torch.tensor(pos.values)
+
+        return batch
 
 
-def read_inputs(inputs):
-    [ds1, ds2] = [read_input(**input_) for input_ in inputs]
-    __import__("pdb").set_trace()  # TODO delme
-    xr.concat(dss, dim="feature")
-    return xr.concat(dss, dim="feature")
+def create_ds(config, selection, iselection):
+    ds = read_configs(config)
+
+    selection = get_slice(selection)
+    iselection = get_slice(iselection)
+
+    selection = {k: v for k, v in selection.items() if k in ds.dims}
+    iselection = {k: v for k, v in iselection.items() if k in ds.dims}
+
+    ds = ds.sel(**selection)
+    ds = ds.isel(**iselection)
+
+    return ds
 
 
-def read_input(path, features=None, stacking_dims=None):
-    ds = xr.open_zarr(path)
-    #  ds = xr.broadcast(ds)[0]
+def read_configs(inputs):
+    das = [read_config(**input_) for input_ in inputs]
+    dataarray = xr.concat(das, dim="feature_dim", coords="minimal")
+    dataset = xr.Dataset({"features": dataarray})
 
-    stacking_dims = stacking_dims or []
-    sample_dims = [dim for dim in ds.dims.keys() if dim not in stacking_dims]
-    stacked_array = ds[features].to_stacked_array("feature", sample_dims=sample_dims)
-    stacked_ds = xr.Dataset({"feature": stacked_array})
-    __import__("pdb").set_trace()  # TODO delme
+    return dataset
 
-    return stacked_array
+
+def read_config(path, features=None, stacking_dim=None):
+    dataset = xr.open_zarr(path)
+    features = features or list(dataset.data_vars)
+
+    if stacking_dim:
+        dataset = dataset.rename({stacking_dim: "feature_dim"})
+        # coords of feature dim are meaningless
+        dataset = dataset.drop("feature_dim")
+
+    feature_da = xr.concat(
+        [dataset[feature] for feature in features], dim="feature_dim", coords="minimal"
+    )
+
+    return feature_da
 
 
 def dict_to_slice(d):
