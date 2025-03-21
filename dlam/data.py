@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import xarray as xr
 from torch.utils.data import Dataset
@@ -5,78 +6,79 @@ from torch.utils.data import Dataset
 from dlam import utils
 
 
+def read_config(path, stacking_dim=None, selection=None, iselection=None):
+    dataset = xr.open_zarr(path)
+    features = list(dataset.data_vars)
+    feature_names = features
+
+    selection = get_slice(selection)
+    iselection = get_slice(iselection)
+
+    dataset = dataset.sel(**selection)
+    dataset = dataset.isel(**iselection)
+
+    if stacking_dim:
+        dataset = dataset.rename({stacking_dim: "feature_dim"})
+        dataset.feature_dim
+
+        feature_names = [feature for feature in features for _ in dataset.feature_dim]
+
+    feature_da = xr.concat(
+        [dataset[feature] for feature in features], dim="feature_dim", coords="minimal"
+    )
+    feature_da.coords["feature_dim"] = ("feature_dim", feature_names)
+
+    return feature_da
+
+
 class WeatherDataset(Dataset):
-    def __init__(self, data, selection=None, iselection=None, coords=None):
+    def __init__(self, input, output, selection=None, iselection=None, coords=None):
         self.coords = coords or ["x", "y"]
+        self.output = output
 
-        self.ds_dict = {}
-        for ds_name, ds_config in data.items():
+        das = [read_config(**inp) for inp in input]
+        ds = xr.concat(das, dim="feature_dim", coords="minimal")
 
-            ds = read_configs(ds_config)
+        selection = get_slice(selection)
+        iselection = get_slice(iselection)
 
-            selection = get_slice(selection)
-            iselection = get_slice(iselection)
+        ds = ds.sel(**selection)
+        self.ds = ds.isel(**iselection)
 
-            selection = {k: v for k, v in selection.items() if k in ds.dims}
-            iselection = {k: v for k, v in iselection.items() if k in ds.dims}
-
-            ds = ds.sel(**selection)
-            ds = ds.isel(**iselection)
-
-            if "time" in ds:
-                self.time = ds.time
-
-            self.ds_dict[ds_name] = ds
+        self.time = ds.time.values
 
     def __len__(self):
         return len(self.time)
 
     def __getitem__(self, idx):
-        time = self.time[idx]
-
         batch = utils.AttrDict()
-        batch.time = torch.tensor(time.values.item() / 1e9)
 
-        for feature, ds in self.ds_dict.items():
-            if "time" in ds.dims:
-                ds = ds.sel(time=time)
+        time = self.time[idx]
+        frame = self.ds.sel(time=time)
 
-            stacked = ds.stack(node=("x", "y")).features.transpose(
-                "node", "feature_dim"
-            )
-
-            batch[feature] = torch.tensor(stacked.values)
+        stacked_frame = frame.stack(node=self.coords)
 
         pos = xr.concat(
-            [stacked.coords[coord] for coord in self.coords], dim="coord"
-        ).transpose("node", "coord")
-        batch["pos"] = torch.tensor(pos.values)
+            [stacked_frame.coords[coord] for coord in self.coords], dim="coord"
+        ).T
+
+        batch.pos = torch.Tensor(pos.values)
+        batch.time = torch.tensor(int(time) // 1e9, dtype=torch.int64)
+
+        for output_name, output_features in self.output.items():
+            if output_features == "all":
+                output_features = np.unique(self.ds.feature_dim.values)
+
+            stack = [
+                stacked_frame.sel(feature_dim=output_feature)
+                for output_feature in output_features
+            ]
+            batch[output_name] = torch.Tensor(
+                xr.concat(stack, dim="feature_dim", coords="minimal").values
+            ).T
+            __import__("pdb").set_trace()  # TODO delme
 
         return batch
-
-
-def read_configs(inputs):
-    das = [read_config(**input_) for input_ in inputs]
-    dataarray = xr.concat(das, dim="feature_dim", coords="minimal")
-    dataset = xr.Dataset({"features": dataarray})
-
-    return dataset
-
-
-def read_config(path, features=None, stacking_dim=None):
-    dataset = xr.open_zarr(path)
-    features = features or list(dataset.data_vars)
-
-    if stacking_dim:
-        dataset = dataset.rename({stacking_dim: "feature_dim"})
-        # coords of feature dim are meaningless
-        dataset = dataset.drop("feature_dim")
-
-    feature_da = xr.concat(
-        [dataset[feature] for feature in features], dim="feature_dim", coords="minimal"
-    )
-
-    return feature_da
 
 
 def dict_to_slice(d):
