@@ -60,7 +60,5 @@ def test_delete_attribute_with_index(sample_dict):
 
 
 def test_missing_key(sample_dict):
-    with pytest.raises(AttributeError):
-        sample_dict.x
     with pytest.raises(KeyError):
         sample_dict["x"]

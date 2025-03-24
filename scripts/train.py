@@ -1,38 +1,54 @@
-from neural_lam.datastore import DATASTORES
+import importlib
+
+import matplotlib.pyplot as plt
+import torch
 
 from dlam import utils
-from dlam.data_module import WeatherDataModule
+from dlam.data import LaggedWeatherDataset
+from dlam.model import get_model_from_config
 from dlam.model.ddpm import DDPM
-from dlam.model.score_model import NaiveModel
 from dlam.trainer import Trainer
+from dlam.utils import test_utils
+from dlam.vis import vis2d
+
+torch.manual_seed(0)
 
 
 def main(config):
     trainer = Trainer(
-        optimizer_config=config.training.optimizer,
-        scheduler_config=config.training.scheduler,
+        config.trainer.get("scheduler_config", {}),
+        config.trainer.get("optimizer_config", {}),
+        **config.trainer.get("kwargs", {})
     )
 
-    datastore = DATASTORES[config.data.datastore.type](config.data.datastore.path)
+    data_config = utils.load_yaml(config.data.config_path)
+    dataset = LaggedWeatherDataset(**data_config)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
 
-    data_module = WeatherDataModule(
-        datastore=datastore,
-        ar_steps_train=config.data.ar_steps_train,
-        ar_steps_eval=config.data.ar_steps_eval,
-        standardize=config.data.standardize,
-        num_past_forcing_steps=config.data.num_past_forcing_steps,
-        num_future_forcing_steps=config.data.num_future_forcing_steps,
-        batch_size=config.data.batch_size,
-        num_workers=config.data.num_workers,
-    )
+    model = get_model_from_config(config.model)
 
-    #  data_module.setup()
-    #  dataloader = data_module.train_dataloader()
+    batch = next(iter(dataloader))
 
-    score_model = lambda x, _: x
-    model = DDPM(score_model)
+    dataloader = test_utils.get_infinite_dataloader(batch)
 
-    trainer.fit(model, data_module)
+    trainer.fit(model, dataloader)
+
+    #  plts = 3
+    #  pos = batch.cond.pos[0]
+    #  _, ax = plt.subplots(plts, 2)
+    #  for frame_idx in range(30, 30 + plts):
+    #      out = model.last[0][0].T[frame_idx]
+    #      gt = batch.target.state[0].T[frame_idx]
+    #
+    #      gtax = ax[frame_idx % 30][0]
+    #      mdax = ax[frame_idx % 30][1]
+    #      vis2d(pos, gt, ax=gtax)
+    #      gtax.set_title("Ground Truth")
+    #
+    #      vis2d(pos, out, ax=mdax)
+    #      mdax.set_title("Trained")
+
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -42,6 +58,6 @@ if __name__ == "__main__":
     parser.add_argument("train_config", type=str)
     args = parser.parse_args()
 
-    config = utils.load_yaml_as_attrdict(args.train_config)
+    config = utils.load_yaml(args.train_config)
 
     main(config)
