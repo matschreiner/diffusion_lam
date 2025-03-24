@@ -3,12 +3,10 @@ class AttrDict(dict):
         super().__init__(*args, **kwargs)
         for key, value in self.items():
             if isinstance(value, dict):
-                self[key] = AttrDict(value)
+                self[key] = type(self)(value)
 
     def __getattr__(self, key):
-        if key in self:
-            return self[key]
-        raise AttributeError(f"Key '{key}' not found")
+        return self[key]
 
     def __setattr__(self, key, value):
         if isinstance(value, dict):
@@ -16,7 +14,4 @@ class AttrDict(dict):
         self[key] = value
 
     def __delattr__(self, key):
-        if key in self:
-            del self[key]
-        else:
-            raise AttributeError(f"Key '{key}' not found")
+        del self[key]

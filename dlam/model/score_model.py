@@ -1,55 +1,34 @@
 import pytorch_lightning as pl
 import torch
 
-
-class MLP(torch.nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super().__init__()
-        self.net = torch.nn.Sequential(
-            torch.nn.Linear(input_size, hidden_size),
-            torch.nn.ReLU(),
-            torch.nn.Linear(hidden_size, output_size),
-        )
-
-    def forward(self, x):
-        return self.net(x)
+from dlam.model import mlp
 
 
 class NaiveModel(pl.LightningModule):
-    def __init__(self):
+    def __init__(self, data_dim):
         super().__init__()
-        self.net = MLP(11, 11, 4)
+        flat_dim = data_dim[0] * data_dim[1]
+        self.net = mlp.MLP(flat_dim, flat_dim, 200)
 
     def forward(self, batch):
-        init_states = self.reshape_and_stack(batch.init_states)
-        forcing_states = self.reshape_and_stack(batch.forcing)
-        input_ = torch.cat([init_states, forcing_states], dim=-1)
+        cond = batch
+        shape = cond.state.shape
+        input_ = cond.state.reshape(1, -1)
 
-        return self.net(input_)
+        output = input_.reshape(shape)
 
-    def training_step(self, batch):
-        out = self.forward(batch)
-        loss = torch.nn.functional.mse_loss(out, batch.target_states)
-        self.log("loss", loss, prog_bar=True)
+        output = self.net(input_)
+        output = output.reshape(shape)
+        self.last = output
+
+        return output
+
+    def training_step(self, batch, _):
+        target = batch.target
+        cond = batch.cond
+        output = self.forward(cond)
+
+        loss = torch.nn.functional.mse_loss(output, target.state)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+
         return loss
-
-    def reshape_and_stack(self, tensor):
-        tensor = tensor.permute(0, 2, 1, 3)
-        shape = tensor.shape
-        return tensor.reshape(shape[0], shape[1], -1)
-
-
-class NaiveScoreModel(NaiveModel):
-    def __init__(self):
-        super().__init__()
-        self.net = MLP(12, 11, 1)
-
-    def forward(self, x, t):
-        x = self.cat_t(x, t)
-        return super().forward(x)
-
-    def cat_t(self, x, t):
-        t = torch.ones_like(x.permute(3, 0, 1, 2)) * t
-        t.permute(1, 2, 3, 0)
-
-        return torch.cat([x, t], dim=-1)

@@ -1,0 +1,10 @@
+input:
+  - path: test/resources/example_height.zarr
+    stacking_dim: "altitude"
+  - path: test/resources/example_pressure.zarr
+    stacking_dim: "pressure"
+
+output:
+  state: ["u", "v", "t", "r"]
+
+coords: [x, y]

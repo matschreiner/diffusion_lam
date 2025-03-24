@@ -12,7 +12,8 @@ class DDPM(pl.LightningModule):
         self.save_hyperparameters()
 
     def training_step(self, batch, _):
-        corrupted, epsilon, t_diff = self.get_corrupted(batch.target_states)
+
+        corrupted, epsilon, t_diff = self.get_corrupted(batch.target.state)
 
         epsilon_hat = self.score_model(corrupted, t_diff)
         loss = torch.nn.functional.mse_loss(epsilon, epsilon_hat)

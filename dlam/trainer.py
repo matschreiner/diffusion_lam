@@ -13,8 +13,8 @@ DEFAULT_OPTIMIZER_CONFIG = {
 
 class Trainer(pl.Trainer):
     def __init__(self, scheduler_config=None, optimizer_config=None, *args, **kwargs):
-        self.scheduler_config = scheduler_config
-        self.optimizer_config = optimizer_config
+        self.scheduler_config = scheduler_config or {}
+        self.optimizer_config = optimizer_config or {}
 
         super().__init__(*args, **kwargs)
 
@@ -32,10 +32,10 @@ class Trainer(pl.Trainer):
     def get_configure_optimizers_callback(self):
 
         def configure_optimizers(pl_module):
-            if self.optimizer_config is None:
+            if not self.optimizer_config:
                 self.optimizer_config = DEFAULT_OPTIMIZER_CONFIG
 
-            if self.scheduler_config is not None:
+            if self.scheduler_config:
                 optimizer = get_optimizer(self.optimizer_config, pl_module)
                 scheduler = get_scheduler(optimizer, self.scheduler_config)
                 return [optimizer], [scheduler]

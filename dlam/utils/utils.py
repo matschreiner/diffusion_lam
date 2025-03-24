@@ -1,3 +1,4 @@
+import importlib
 import os
 import pickle as pkl
 
@@ -6,7 +7,7 @@ import yaml
 from dlam.utils.attrdict import AttrDict
 
 
-def load_yaml_as_attrdict(path):
+def load_yaml(path):
     with open(path, "r") as file:
         d = yaml.safe_load(file)
         return AttrDict(d)
