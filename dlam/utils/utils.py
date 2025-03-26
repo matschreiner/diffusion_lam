@@ -28,3 +28,9 @@ def load(name):
 def load_yaml(path):
     with open(path, "r") as file:
         return AttrDict(yaml.safe_load(file))
+
+
+def get_component_from_config(config):
+    module = importlib.import_module(config.module)
+    cls = getattr(module, config.name)
+    return cls(**config.get("kwargs", {}))

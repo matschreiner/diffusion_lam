@@ -2,18 +2,19 @@ import torch
 
 
 class MLP(torch.nn.Module):
-    def __init__(self, input_dim, output_dim, hidden_dim=None, num_hidden=1):
+    def __init__(self, in_dim, out_dim, hidden_dim=None, hidden_layers=1):
         super().__init__()
 
         if hidden_dim is None:
-            hidden_dim = output_dim
+            hidden_dim = out_dim
 
-        modules = [torch.nn.Linear(input_dim, hidden_dim)]
+        modules = [torch.nn.Linear(in_dim, hidden_dim, bias=True)]
 
-        for i in range(num_hidden):
-            modules.append(torch.nn.SiLU())
-            layer_dim = hidden_dim if i < num_hidden - 1 else output_dim
-            modules.append(torch.nn.Linear(hidden_dim, layer_dim))
+        for i in range(hidden_layers):
+            modules.append(torch.nn.ReLU())
+            layer_in_dim = hidden_dim
+            layer_out_dim = hidden_dim if i < hidden_layers - 1 else out_dim
+            modules.append(torch.nn.Linear(layer_in_dim, layer_out_dim, bias=True))
 
         self.net = torch.nn.Sequential(*modules)
 

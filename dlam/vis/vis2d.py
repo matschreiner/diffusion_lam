@@ -21,3 +21,6 @@ def vis2d(pos, vals, ax=None):
     xi, yi = np.meshgrid(xi, yi)
     zi = griddata((x, y), z, (xi, yi), method="linear")
     ax.imshow(zi, origin="lower", extent=[x.min(), x.max(), y.min(), y.max()])
+
+    if ax == None:
+        return fig, ax

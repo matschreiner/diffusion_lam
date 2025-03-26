@@ -1,65 +1,94 @@
 import pytorch_lightning as pl
 import torch
 
-from dlam.model import noise_schedule
+from dlam.model import dpm_solve, noise_schedule
+
+
+class CosineAlphaSchedule:
+    def __init__(self, s=0.008):
+        self.s = s
+        self.f0 = self.f(torch.tensor(0.0))
+
+    def f(self, t_diff):
+        return torch.cos(t_diff * torch.pi * 0.5) ** 2
+
+    def get_alpha(self, t_diff):
+        return self.f(t_diff) / self.f0
 
 
 class DDPM(pl.LightningModule):
-    def __init__(self, score_model, power=2.0):
+    def __init__(self, score_model):
         super().__init__()
         self.score_model = score_model
-        self.noise_schedule = noise_schedule.PolynomialSchedule(power=power)
-        self.save_hyperparameters()
+        self.noise_schedule = CosineAlphaSchedule()
+        self.loss = []
 
-    def training_step(self, batch, _):
+    def training_step(self, target, _):
+        batch_size = target.shape[0]
 
-        corrupted, epsilon, t_diff = self.get_corrupted(batch.target.state)
+        epsilon = torch.randn_like(target)
+        t_diff = torch.rand([batch_size, 1], device=target.device)
+        alpha = self.noise_schedule.get_alpha(t_diff)
+        corrupted = multiply_first_dim(alpha**0.5, target) + multiply_first_dim(
+            (1 - alpha) ** 0.5, epsilon
+        )
+
+        #  import matplotlib.pyplot as plt
+        #
+        #  i = torch.linspace(0, 1, 1000)
+        #  alpha = self.noise_schedule.get_alpha(i)
+        #  signal = alpha**0.5
+        #  noise = (1 - alpha) ** 0.5
+        #  plt.plot(i, alpha)
+        #  plt.plot(i, signal)
+        #  plt.plot(i, noise)
+        #  plt.plot(i, signal + noise)
+        #  plt.show()
+        #  plt.plot(i, alpha + (1 - alpha))
+        #  __import__("pdb").set_trace()  # TODO delme
 
         epsilon_hat = self.score_model(corrupted, t_diff)
-        loss = torch.nn.functional.mse_loss(epsilon, epsilon_hat)
+        print("epsilon_hat", epsilon_hat.std())
+        print("epsilon    ", epsilon.std())
+        loss = torch.nn.functional.mse_loss(epsilon_hat, epsilon)
 
         self.log("loss", loss, prog_bar=True, logger=True)
+        self.loss.append(loss.item())
+        return loss
 
-        return loss.mean()
+    def sample(self, batch, ode_steps):
+        noise_schedule = dpm_solve.NoiseScheduleVP(schedule="cosine")
 
-    def get_corrupted(self, x):
-        batch_size = x.shape[0]
+        def forward(corr, t_diff):
+            t_diff.unsqueeze_(-1)
+            epsilon_hat = self.score_model(corr, t_diff)
 
-        t_diff = torch.rand(batch_size, device=x.device)
-        alpha = self.noise_schedule.get_alpha(t_diff)
+            return epsilon_hat
 
-        x = x.permute(1, 2, 3, 0)
-        epsilon = torch.randn_like(x, device=x.device)
-        corrupted = torch.sqrt(alpha) * x + torch.sqrt(1 - alpha) * epsilon
+        wrapped_model = dpm_solve.model_wrapper(forward, noise_schedule)
+        dpm_solver = dpm_solve.DPM_Solver(
+            wrapped_model,
+            noise_schedule,
+            algorithm_type="dpmsolver++",
+        )
 
-        return corrupted.permute(3, 0, 1, 2), epsilon.permute(3, 0, 1, 2), t_diff
+        corr = torch.randn_like(batch, device=batch.device)
+        corr, intermediates = dpm_solver.sample(
+            corr,
+            t_end=1e-4,
+            steps=ode_steps,
+            order=1,
+            method="singlestep",
+            return_intermediate=True,
+        )
+        return corr, intermediates
 
-    def on_before_zero_grad(self, *_, **__):  # pylint:disable=unused-argument
-        self.ema.update(self.score_model.parameters())
+    def configure_optimizers(self):
+        return torch.optim.Adam(self.parameters(), lr=1e-3)
 
-    #  def sample(self, batch, ode_steps):
-    #      n_disc = 1000
-    #
-    #      alphas_cumprod = self.noise_schedule.get_alpha(torch.linspace(0, 1, n_disc))
-    #      sample_tracker = SampleTracker()
-    #      noise_schedule = dpm_solve.NoiseScheduleVP(
-    #          "discrete",
-    #          alphas_cumprod=alphas_cumprod,
-    #      )
-    #
-    #      def forward(x, t_diff):
-    #          batch["corr"].x = x
-    #          batch["t_diff"] = t_diff / n_disc - 1 / ode_steps
-    #
-    #          sample_tracker.add_frame(x)
-    #          epsilon_hat = self.score_model(batch)
-    #
-    #          return epsilon_hat.x
-    #
-    #      wrapped_model = dpm_solve.model_wrapper(forward, noise_schedule)
-    #      dpm_solver = dpm_solve.DPM_Solver(wrapped_model, noise_schedule)
-    #
-    #      batch["corr"] = get_epsilon_like(batch["cond"])
-    #      batch["corr"].x = dpm_solver.sample(batch["corr"].x, ode_steps)
-    #
-    #      return batch["corr"], sample_tracker.get_traj()
+
+def multiply_first_dim(x, y):
+    x_perm = x.movedim(0, -1)
+    y_perm = y.movedim(0, -1)
+    z_perm = x_perm * y_perm
+    return z_perm.movedim(-1, 0)

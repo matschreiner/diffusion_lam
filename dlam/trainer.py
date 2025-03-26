@@ -4,6 +4,7 @@ import pytorch_lightning as pl
 import torch
 
 import dlam
+from dlam import utils
 
 DEFAULT_OPTIMIZER_CONFIG = {
     "name": "AdamW",
@@ -40,6 +41,7 @@ class Trainer(pl.Trainer):
                 scheduler = get_scheduler(optimizer, self.scheduler_config)
                 return [optimizer], [scheduler]
 
+            optimizer = get_optimizer(self.optimizer_config, pl_module)
             return optimizer
 
         return configure_optimizers

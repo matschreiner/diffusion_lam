@@ -5,7 +5,6 @@ class ConstantDataset(Dataset):
     def __init__(self, batch, normalize=True):
         if normalize:
             state = batch.cond.state
-
             mean = state.mean(axis=-1, keepdim=True)
             std = state.std(axis=-1, keepdim=True)
             batch.cond.state = (state - mean) / std
@@ -20,6 +19,10 @@ class ConstantDataset(Dataset):
         return self.batch
 
 
-def get_infinite_dataloader(batch):
-    dataset = ConstantDataset(batch)
-    return DataLoader(dataset, batch_size=1)
+def bp(batch):
+    return batch[0]
+
+
+def get_infinite_dataloader(batch, normalize=True):
+    dataset = ConstantDataset(batch, normalize=normalize)
+    return DataLoader(dataset, batch_size=1, collate_fn=bp)

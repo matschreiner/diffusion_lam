@@ -1,34 +1,27 @@
+import numpy as np
 import pytorch_lightning as pl
 import torch
+from torch import nn
 
-from dlam.model import mlp
+from dlam.model import embedding, mlp
 
 
-class NaiveModel(pl.LightningModule):
-    def __init__(self, data_dim):
+class ScoreModel(nn.Module):
+    def __init__(self, in_dim, hidden_dim, out_dim, hidden_layers):
         super().__init__()
-        flat_dim = data_dim[0] * data_dim[1]
-        self.net = mlp.MLP(flat_dim, flat_dim, 200)
+        #  in_dim = in_dim + 9
+        #  self.embedder = embedding.PositionalEncoder(10)
 
-    def forward(self, batch):
-        cond = batch
-        shape = cond.state.shape
-        input_ = cond.state.reshape(1, -1)
+        self.net = mlp.MLP(
+            in_dim=in_dim,
+            hidden_dim=hidden_dim,
+            out_dim=out_dim,
+            hidden_layers=hidden_layers,
+        )
 
-        output = input_.reshape(shape)
+    def forward(self, x, t_diff):
+        x = torch.cat([x, t_diff], dim=1)
 
-        output = self.net(input_)
-        output = output.reshape(shape)
-        self.last = output
-
-        return output
-
-    def training_step(self, batch, _):
-        target = batch.target
-        cond = batch.cond
-        output = self.forward(cond)
-
-        loss = torch.nn.functional.mse_loss(output, target.state)
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
-
-        return loss
+        self.net(x)
+        x = self.net(x)
+        return x
