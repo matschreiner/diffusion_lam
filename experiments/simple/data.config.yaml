@@ -3,8 +3,9 @@ input:
     stacking_dim: "altitude"
   - path: test/resources/example_pressure.zarr
     stacking_dim: "pressure"
+  - path: test/resources/example_single.zarr
 
 output:
-  state: ["u", "v", "t", "r"]
+  state: ["u"]
 
 coords: [x, y]

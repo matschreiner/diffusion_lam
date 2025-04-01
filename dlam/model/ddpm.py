@@ -10,7 +10,7 @@ class CosineAlphaSchedule:
         self.f0 = self.f(torch.tensor(0.0))
 
     def f(self, t_diff):
-        return torch.cos(t_diff * torch.pi * 0.5) ** 2
+        return torch.cos(t_diff * torch.pi * 0.5)
 
     def get_alpha(self, t_diff):
         return self.f(t_diff) / self.f0
@@ -32,20 +32,6 @@ class DDPM(pl.LightningModule):
         corrupted = multiply_first_dim(alpha**0.5, target) + multiply_first_dim(
             (1 - alpha) ** 0.5, epsilon
         )
-
-        #  import matplotlib.pyplot as plt
-        #
-        #  i = torch.linspace(0, 1, 1000)
-        #  alpha = self.noise_schedule.get_alpha(i)
-        #  signal = alpha**0.5
-        #  noise = (1 - alpha) ** 0.5
-        #  plt.plot(i, alpha)
-        #  plt.plot(i, signal)
-        #  plt.plot(i, noise)
-        #  plt.plot(i, signal + noise)
-        #  plt.show()
-        #  plt.plot(i, alpha + (1 - alpha))
-        #  __import__("pdb").set_trace()  # TODO delme
 
         epsilon_hat = self.score_model(corrupted, t_diff)
         print("epsilon_hat", epsilon_hat.std())
@@ -75,7 +61,7 @@ class DDPM(pl.LightningModule):
         corr = torch.randn_like(batch, device=batch.device)
         corr, intermediates = dpm_solver.sample(
             corr,
-            t_end=1e-4,
+            t_end=1e-3,
             steps=ode_steps,
             order=1,
             method="singlestep",
@@ -83,8 +69,39 @@ class DDPM(pl.LightningModule):
         )
         return corr, intermediates
 
-    def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=1e-3)
+    #  def sample(self, batch, sde_steps=1000):
+    #      x = torch.randn_like(batch)
+    #      alpha_bars = [
+    #          self.noise_schedule.get_alpha(torch.tensor(i / sde_steps, device=x.device))
+    #          for i in range(sde_steps + 1)
+    #      ]
+    #      alpha_bars[0] = torch.tensor(1.0, device=x.device)
+    #      alphas = [alpha_bars[i] / alpha_bars[i + 1] for i in range(sde_steps)]
+    #      xs = [x]
+    #      for t in reversed(range(1, sde_steps + 1)):
+    #
+    #          t_diff = torch.full((len(x), 1), t / sde_steps)
+    #
+    #          epsilon_hat = self.score_model(x, t_diff)
+    #          alpha_bar = self.noise_schedule.get_alpha(t_diff)
+    #          alpha_bar_m1 = self.noise_schedule.get_alpha(t_diff - 1 / sde_steps)
+    #          alpha = alpha_bar / alpha_bar_m1
+    #
+    #          x = (
+    #              1
+    #              / (alpha**0.5)
+    #              * (x - (1 - alpha) / ((1 - alpha_bar) ** 0.5) * epsilon_hat)
+    #          )
+    #
+    #          if t > 1:
+    #              variance = 0.0001
+    #              std = variance ** (0.5)
+    #              x += std * torch.randn_like(x)
+    #
+    #          x = x.detach()
+    #          xs.append(x)
+    #
+    #      return x, xs
 
 
 def multiply_first_dim(x, y):

@@ -1,54 +1,86 @@
-import importlib
+import os
 
 import matplotlib.pyplot as plt
+import pytorch_lightning as pl
 import torch
+from torch.utils.data import DataLoader
 
 from dlam import utils
-from dlam.data import LaggedWeatherDataset
 from dlam.model import get_model_from_config
 from dlam.model.ddpm import DDPM
 from dlam.trainer import Trainer
-from dlam.utils import test_utils
-from dlam.vis import vis2d
-
-torch.manual_seed(0)
+from dlam.vis import animate
 
 
 def main(config):
+
     trainer = Trainer(
         config.trainer.get("scheduler_config", {}),
         config.trainer.get("optimizer_config", {}),
-        **config.trainer.get("kwargs", {})
+        **config.trainer.get("kwargs", {}),
     )
 
-    data_config = utils.load_yaml(config.data.config_path)
-    dataset = LaggedWeatherDataset(**data_config)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
+    dataset = utils.get_component_from_config(config.dataset)
+    dataloader = DataLoader(dataset, **config.dataloader.get("kwargs", {}))
 
-    model = get_model_from_config(config.model)
+    score_model = utils.get_component_from_config(config.model)
+    #  plt.scatter(*dataset.data.T, alpha=0.1, s=1)
+    #  plt.show()
 
-    batch = next(iter(dataloader))
+    example_batch = next(iter(dataloader))
 
-    dataloader = test_utils.get_infinite_dataloader(batch)
+    score_model = get_model_from_config(config.model)
+    ddpm = DDPM(score_model)
 
-    trainer.fit(model, dataloader)
+    trainer.fit(ddpm, dataloader)
 
-    #  plts = 3
-    #  pos = batch.cond.pos[0]
-    #  _, ax = plt.subplots(plts, 2)
-    #  for frame_idx in range(30, 30 + plts):
-    #      out = model.last[0][0].T[frame_idx]
-    #      gt = batch.target.state[0].T[frame_idx]
-    #
-    #      gtax = ax[frame_idx % 30][0]
-    #      mdax = ax[frame_idx % 30][1]
-    #      vis2d(pos, gt, ax=gtax)
-    #      gtax.set_title("Ground Truth")
-    #
-    #      vis2d(pos, out, ax=mdax)
-    #      mdax.set_title("Trained")
+    utils.save(ddpm, "results/mine/model.pkl")
 
+    out, intermediates = ddpm.sample(dataset.data, **config.get("sample", {}))
+
+    fig, ax = plt.subplots()
+    #  ax.scatter(*example_batch.T.numpy())
+    #  movement = torch.stack(intermediates).diff(dim=0).norm(dim=-1).mean(-1)
+    #  plt.plot(movement)
+    #  plt.show()
+
+    def fn(ax, data):
+        ax.scatter(*example_batch.T.numpy())
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+
+        ax.scatter(*data.T.numpy(), alpha=0.1, s=1)
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+
+    ani = animate.animate(
+        intermediates,
+        fn=fn,
+        fig=fig,
+        ax=ax,
+    )
+
+    os.makedirs("results/mine", exist_ok=True)
+    ani.save("results/mine/render.mp4", fps=20)
+    utils.save(
+        intermediates,
+        "results/mine/traj.pkl",
+    )
+    utils.save(
+        out,
+        "results/mine/sample.pkl",
+    )
     plt.show()
+
+    plt.scatter(*example_batch.T.numpy())
+    plt.scatter(*out.T)
+    plt.xlim(ax.get_xlim())
+    plt.ylim(ax.get_ylim())
+    plt.show()
+
+    #  traj = torch.stack(intermediates).squeeze().numpy()
+    #  out = out.squeeze().numpy()
+    #  plt.hist(out, bins=100, density=True)
 
 
 if __name__ == "__main__":

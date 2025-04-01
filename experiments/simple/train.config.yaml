@@ -3,20 +3,35 @@ trainer:
     name: Adam
     kwargs:
       lr: 0.001
-      weight_decay: 0.0001
-  scheduler_config:
-    name: StepLR
-    kwargs:
-      step_size: 30
-      gamma: 0.1
+  # scheduler_config:
+  #   name: StepLR
+  #   kwargs:
+  #     step_size: 30
+  #     gamma: 0.99
   kwargs:
-    max_steps: 20
+    # max_steps: 2000
+    max_epochs: 500
 
-data:
-  config_path: experiments/simple/data.config.yaml
+dataset:
+  module: dlam.toy_data
+  name: HalfmoonDataset
+  kwargs:
+    n_samples: 100000
+    noise: 0.1
+
+dataloader:
+  kwargs:
+    batch_size: 2048
+    shuffle: True
 
 model:
   module: dlam.model.score_model
-  name: NaiveModel
+  name: ScoreModel
   kwargs:
-    data_dim: [100, 92]
+    hidden_dim: 64
+    hidden_layers: 2
+    in_dim: 3
+    out_dim: 2
+
+sample:
+  ode_steps: 100
