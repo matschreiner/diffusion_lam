@@ -42,10 +42,9 @@ class EDM(pl.LightningModule):
         return loss
 
     def sample(self, batch, steps=18, **kwargs):
-        latents = torch.randn_like(batch)
         sample, intermediate = edm_sampler(
             self.model,
-            latents,
+            batch,
             num_steps=steps,
             **kwargs,
         )
@@ -89,7 +88,7 @@ class EDMPrecond(torch.nn.Module):
 
 def edm_sampler(
     net,
-    latents,
+    batch,
     randn_like=torch.randn_like,
     num_steps=18,
     sigma_min=0.002,
@@ -102,6 +101,7 @@ def edm_sampler(
 ):
     sigma_min = max(sigma_min, net.sigma_min)
     sigma_max = min(sigma_max, net.sigma_max)
+    latents = torch.randn_like(batch.target)
 
     step_indices = torch.arange(num_steps, dtype=torch.float64, device=latents.device)
     t_steps = (
@@ -133,13 +133,16 @@ def edm_sampler(
             t_hat = torch.ones((len(x_hat), 1), device=x_hat.device) * t_hat
             t_next = torch.ones((len(x_hat), 1), device=x_hat.device) * t_next
 
-            denoised = net(x_hat, t_hat).to(torch.float64)
+            batch.corr = x_hat
+
+            denoised = net(batch, t_hat).to(torch.float64)
             d_cur = (x_hat - denoised) / t_hat
             x_next = x_hat + (t_next - t_hat) * d_cur
 
             #  Apply 2nd order correction.
             if i < num_steps - 1:
-                denoised = net(x_next, t_next).to(torch.float64)
+                batch.corr = x_next
+                denoised = net(batch, t_next).to(torch.float64)
                 d_prime = (x_next - denoised) / t_next
                 x_next = x_hat + (t_next - t_hat) * (0.5 * d_cur + 0.5 * d_prime)
 
