@@ -29,19 +29,22 @@ class EDM(pl.LightningModule):
         return loss.mean()
 
     def get_loss(self, batch):
-        rnd_normal = torch.randn([batch.shape[0], 1], device=batch.device)
+        target = batch.target
+
+        rnd_normal = torch.randn([target.shape[0], 1], device=target.device)
         sigma = (rnd_normal * self.P_std + self.P_mean).exp()
         weight = (sigma**2 + self.sigma_data**2) / (sigma * self.sigma_data) ** 2
-        n = torch.randn_like(batch) * sigma
-        D_yn = self.model(batch + n, sigma)
-        loss = weight * ((D_yn - batch) ** 2)
+        n = torch.randn_like(target) * sigma
+
+        batch.corr = target + n
+        D_yn = self.model(batch, sigma)
+        loss = weight * ((D_yn - target) ** 2)
         return loss
 
     def sample(self, batch, steps=18, **kwargs):
-        latents = torch.randn_like(batch)
         sample, intermediate = edm_sampler(
             self.model,
-            latents,
+            batch,
             num_steps=steps,
             **kwargs,
         )
@@ -62,20 +65,21 @@ class EDMPrecond(torch.nn.Module):
         self.sigma_data = sigma_data
         self.model = model
 
-    def forward(self, x, sigma):
-        x = x.to(torch.float32)
+    def forward(self, batch, sigma):
+        skip_corr = batch.corr.to(torch.float32).clone()
 
         c_skip = self.sigma_data**2 / (sigma**2 + self.sigma_data**2)
         c_out = sigma * self.sigma_data / (sigma**2 + self.sigma_data**2).sqrt()
         c_in = 1 / (self.sigma_data**2 + sigma**2).sqrt()
         c_noise = sigma.log() / 4
 
+        batch.corr = c_in * skip_corr
         F_x = self.model(
-            (c_in * x),
+            batch,
             c_noise,
         )
 
-        D_x = c_skip * x + c_out * F_x.to(torch.float32)
+        D_x = c_skip * skip_corr + c_out * F_x.to(torch.float32)
         return D_x
 
     def round_sigma(self, sigma):
@@ -84,7 +88,7 @@ class EDMPrecond(torch.nn.Module):
 
 def edm_sampler(
     net,
-    latents,
+    batch,
     randn_like=torch.randn_like,
     num_steps=18,
     sigma_min=0.002,
@@ -97,6 +101,7 @@ def edm_sampler(
 ):
     sigma_min = max(sigma_min, net.sigma_min)
     sigma_max = min(sigma_max, net.sigma_max)
+    latents = torch.randn_like(batch.target)
 
     step_indices = torch.arange(num_steps, dtype=torch.float64, device=latents.device)
     t_steps = (
@@ -128,13 +133,16 @@ def edm_sampler(
             t_hat = torch.ones((len(x_hat), 1), device=x_hat.device) * t_hat
             t_next = torch.ones((len(x_hat), 1), device=x_hat.device) * t_next
 
-            denoised = net(x_hat, t_hat).to(torch.float64)
+            batch.corr = x_hat
+
+            denoised = net(batch, t_hat).to(torch.float64)
             d_cur = (x_hat - denoised) / t_hat
             x_next = x_hat + (t_next - t_hat) * d_cur
 
             #  Apply 2nd order correction.
             if i < num_steps - 1:
-                denoised = net(x_next, t_next).to(torch.float64)
+                batch.corr = x_next
+                denoised = net(batch, t_next).to(torch.float64)
                 d_prime = (x_next - denoised) / t_next
                 x_next = x_hat + (t_next - t_hat) * (0.5 * d_cur + 0.5 * d_prime)
 

@@ -13,38 +13,47 @@ from dlam.vis import animate
 def main(config):
     pprint(config)
 
-    profiler_dir_path = "."
-    profiler_filename = "profiler"
-    trainer = Trainer(
-        config.trainer.get("scheduler_config", {}),
-        config.trainer.get("optimizer_config", {}),
-        **config.trainer.get("kwargs", {}),
-        profiler=SimpleProfiler(dirpath=profiler_dir_path, filename=profiler_filename),
-    )
-
     dataset = utils.get_component(config.dataset)
     dataloader = DataLoader(dataset, batch_size=2048)
 
-    noise_model = utils.get_component(config.noise_model)
-    model = utils.get_component(config.score_based_model, noise_model=noise_model)
+    #  profiler_dir_path = "."
+    #  profiler_filename = "profiler"
+    #  trainer = Trainer(
+    #      config.trainer.get("scheduler_config", {}),
+    #      config.trainer.get("optimizer_config", {}),
+    #      **config.trainer.get("kwargs", {}),
+    #      profiler=SimpleProfiler(dirpath=profiler_dir_path, filename=profiler_filename),
+    #  )
+    #
+    #
+    #  noise_model = utils.get_component(config.noise_model)
+    #  model = utils.get_component(config.score_based_model, noise_model=noise_model)
+    #
+    #  trainer.fit(model, dataloader)
+    #  utils.save(model, "/tmp/model.pkl")
+    #  print_profiler(profiler_dir_path, profiler_filename)
 
-    trainer.fit(model, dataloader)
-    print_profiler(profiler_dir_path, profiler_filename)
+    model = utils.load("/tmp/model.pkl")
 
     evaluate_model(model, dataset)
 
 
 def evaluate_model(model, dataset):
-    example_batch = dataset.data
-    sample, intermediate = model.sample(example_batch, steps=18)
-    plot(sample, example_batch)
+    batch = next(iter(DataLoader(dataset, batch_size=100_000)))
+    sample, intermediate = model.sample(batch, steps=50)
+    plot(sample, batch)
+
+    mask0 = batch.cond.squeeze() == 0
+    mask1 = batch.cond.squeeze() == 1
 
     def fn(ax, data):
-        ax.scatter(*example_batch.T.numpy())
+        ax.scatter(*batch.target.T.numpy())
         xlim = ax.get_xlim()
         ylim = ax.get_ylim()
 
-        ax.scatter(*data.T.numpy(), alpha=0.1, s=1)
+        ax.scatter(*data[mask0].T.numpy(), alpha=0.1, s=1)
+        ax.scatter(*data[mask1].T.numpy(), alpha=0.1, s=1)
+
         ax.set_xlim(xlim)
         ax.set_ylim(ylim)
 
@@ -58,15 +67,19 @@ def evaluate_model(model, dataset):
 def plot(sample, data):
     _, ax = plt.subplots(1, 3, figsize=(15, 5))
 
-    ax[0].scatter(*data.T.numpy(), alpha=0.5)
-    ax[0].scatter(*sample.T, s=1, alpha=0.1)
+    mask0 = data.cond.squeeze() == 0
+    mask1 = data.cond.squeeze() == 1
+
+    ax[0].scatter(*data.target.T.numpy(), alpha=0.5)
+    ax[0].scatter(*sample[mask0].T, s=1, alpha=0.1)
+    ax[0].scatter(*sample[mask1].T, s=1, alpha=0.1)
     ax[0].set_title("sample")
 
-    ax[1].hist(data[:, 0].numpy(), bins=100, alpha=0.5)
+    ax[1].hist(data.target[:, 0].numpy(), bins=100, alpha=0.5)
     ax[1].hist(sample[:, 0].numpy(), bins=100, histtype="step")
     ax[1].set_title("x")
 
-    ax[2].hist(data[:, 1].numpy(), bins=100, alpha=0.5)
+    ax[2].hist(data.target[:, 1].numpy(), bins=100, alpha=0.5)
     ax[2].hist(sample[:, 1].numpy(), bins=100, histtype="step")
     ax[2].set_title("y")
 
