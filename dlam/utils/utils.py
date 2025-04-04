@@ -1,6 +1,7 @@
 import importlib
 import os
 import pickle as pkl
+from time import time
 
 import yaml
 
@@ -30,7 +31,23 @@ def load_yaml(path):
         return AttrDict(yaml.safe_load(file))
 
 
-def get_component_from_config(config):
-    module = importlib.import_module(config.module)
-    cls = getattr(module, config.name)
-    return cls(**config.get("kwargs", {}))
+def get_component(config, **kwargs):
+    kwargs = {**config.get("kwargs", {}), **kwargs}
+    module = importlib.import_module(config["module"])
+    cls = getattr(module, config["name"])
+    return cls(**kwargs)
+
+
+class Timer:
+    def __init__(self):
+        self.start_time = time()
+
+    def start(self):
+        self.start_time = time()
+
+    def end(self):
+        print(f"Elapsed time: {time() - self.start_time}")
+        return time() - self.start_time
+
+    def stop(self, *args, **kwargs):
+        self.end(*args, **kwargs)

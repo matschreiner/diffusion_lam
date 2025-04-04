@@ -2,7 +2,11 @@ import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 
 
-def animate(data, fn, fig, ax, **kwargs):
+def animate(data, fn, fig=None, ax=None, **kwargs):
+
+    if ax is None or fig is None:
+        fig, ax = plt.subplots()
+
     def update_frame(i):
         ax.clear()
         ax.set_xlabel("frame: {}".format(i))

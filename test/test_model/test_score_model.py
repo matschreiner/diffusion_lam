@@ -1,4 +1,4 @@
-from dlam.model.score_model import NaiveModel
+from dlam.model.noise_model import NaiveModel
 
 
 def test_model(batch):

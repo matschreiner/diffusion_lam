@@ -1,48 +1,43 @@
 import os
+from pprint import pprint
 
 import matplotlib.pyplot as plt
-import pytorch_lightning as pl
-import torch
+from pytorch_lightning.profilers import SimpleProfiler
 from torch.utils.data import DataLoader
 
 from dlam import utils
-from dlam.model import get_model_from_config
-from dlam.model.ddpm import DDPM
 from dlam.trainer import Trainer
 from dlam.vis import animate
 
 
 def main(config):
+    pprint(config)
 
+    profiler_dir_path = "."
+    profiler_filename = "profiler"
     trainer = Trainer(
         config.trainer.get("scheduler_config", {}),
         config.trainer.get("optimizer_config", {}),
         **config.trainer.get("kwargs", {}),
+        profiler=SimpleProfiler(dirpath=profiler_dir_path, filename=profiler_filename),
     )
 
-    dataset = utils.get_component_from_config(config.dataset)
-    dataloader = DataLoader(dataset, **config.dataloader.get("kwargs", {}))
+    dataset = utils.get_component(config.dataset)
+    dataloader = DataLoader(dataset, batch_size=2048)
 
-    score_model = utils.get_component_from_config(config.model)
-    #  plt.scatter(*dataset.data.T, alpha=0.1, s=1)
-    #  plt.show()
+    noise_model = utils.get_component(config.noise_model)
+    model = utils.get_component(config.score_based_model, noise_model=noise_model)
 
-    example_batch = next(iter(dataloader))
+    trainer.fit(model, dataloader)
+    print_profiler(profiler_dir_path, profiler_filename)
 
-    score_model = get_model_from_config(config.model)
-    ddpm = DDPM(score_model)
+    evaluate_model(model, dataset)
 
-    trainer.fit(ddpm, dataloader)
 
-    utils.save(ddpm, "results/mine/model.pkl")
-
-    out, intermediates = ddpm.sample(dataset.data, **config.get("sample", {}))
-
-    fig, ax = plt.subplots()
-    #  ax.scatter(*example_batch.T.numpy())
-    #  movement = torch.stack(intermediates).diff(dim=0).norm(dim=-1).mean(-1)
-    #  plt.plot(movement)
-    #  plt.show()
+def evaluate_model(model, dataset):
+    example_batch = dataset.data
+    sample, intermediate = model.sample(example_batch, steps=18)
+    plot(sample, example_batch)
 
     def fn(ax, data):
         ax.scatter(*example_batch.T.numpy())
@@ -54,33 +49,34 @@ def main(config):
         ax.set_ylim(ylim)
 
     ani = animate.animate(
-        intermediates,
-        fn=fn,
-        fig=fig,
-        ax=ax,
+        intermediate,
+        fn,
     )
+    ani.save("anim.mp4", fps=10)
 
-    os.makedirs("results/mine", exist_ok=True)
-    ani.save("results/mine/render.mp4", fps=20)
-    utils.save(
-        intermediates,
-        "results/mine/traj.pkl",
-    )
-    utils.save(
-        out,
-        "results/mine/sample.pkl",
-    )
+
+def plot(sample, data):
+    _, ax = plt.subplots(1, 3, figsize=(15, 5))
+
+    ax[0].scatter(*data.T.numpy(), alpha=0.5)
+    ax[0].scatter(*sample.T, s=1, alpha=0.1)
+    ax[0].set_title("sample")
+
+    ax[1].hist(data[:, 0].numpy(), bins=100, alpha=0.5)
+    ax[1].hist(sample[:, 0].numpy(), bins=100, histtype="step")
+    ax[1].set_title("x")
+
+    ax[2].hist(data[:, 1].numpy(), bins=100, alpha=0.5)
+    ax[2].hist(sample[:, 1].numpy(), bins=100, histtype="step")
+    ax[2].set_title("y")
+
     plt.show()
 
-    plt.scatter(*example_batch.T.numpy())
-    plt.scatter(*out.T)
-    plt.xlim(ax.get_xlim())
-    plt.ylim(ax.get_ylim())
-    plt.show()
 
-    #  traj = torch.stack(intermediates).squeeze().numpy()
-    #  out = out.squeeze().numpy()
-    #  plt.hist(out, bins=100, density=True)
+def print_profiler(dir_path, filename):
+    fp = os.path.join(dir_path, "fit-" + filename) + ".txt"
+    with open(fp, "rb") as f:
+        print(f)
 
 
 if __name__ == "__main__":
