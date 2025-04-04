@@ -34,8 +34,10 @@ class ConditionalNoiseModel(nn.Module):
             hidden_layers=hidden_layers,
         )
 
-    def forward(self, x, t_diff):
-        x = torch.cat([x, t_diff], dim=1)
+    def forward(self, batch, t_diff):
+        x = batch.corr
+        cond = batch.cond.unsqueeze(1)
+        x = torch.cat([x, cond, t_diff], dim=1)
 
         self.net(x)
         x = self.net(x)

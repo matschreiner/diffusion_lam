@@ -11,6 +11,7 @@ trainer:
   #     gamma: 0.99
   kwargs:
     max_steps: 5000
+    # max_steps: 5000
     # max_epochs: 500
 
 dataset:
@@ -31,11 +32,11 @@ score_based_model:
 
 noise_model:
   module: dlam.model.noise_model
-  name: NoiseModel
+  name: ConditionalNoiseModel
   kwargs:
     hidden_dim: 64
     hidden_layers: 2
-    in_dim: 3
+    in_dim: 4
     out_dim: 2
 
 sample:
