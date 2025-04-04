@@ -10,19 +10,35 @@ class EDM(pl.LightningModule):
     def __init__(
         self,
         noise_model,
+        P_mean=-1.2,
+        P_std=1.2,
+        sigma_data=1,
     ):
         super().__init__()
         self.noise_model = noise_model
-        self.loss = EDMLoss()
         self.model = EDMPrecond(noise_model)
 
+        # loss params
+        self.P_mean = P_mean
+        self.P_std = P_std
+        self.sigma_data = sigma_data
+
     def training_step(self, batch):
-        loss = self.loss(self.model, batch).mean()
+        loss = self.get_loss(batch).mean()
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
         return loss.mean()
 
-    def sample(self, example_batch, steps=18, **kwargs):
-        latents = torch.randn_like(example_batch)
+    def get_loss(self, batch):
+        rnd_normal = torch.randn([batch.shape[0], 1], device=batch.device)
+        sigma = (rnd_normal * self.P_std + self.P_mean).exp()
+        weight = (sigma**2 + self.sigma_data**2) / (sigma * self.sigma_data) ** 2
+        n = torch.randn_like(batch) * sigma
+        D_yn = self.model(batch + n, sigma)
+        loss = weight * ((D_yn - batch) ** 2)
+        return loss
+
+    def sample(self, batch, steps=18, **kwargs):
+        latents = torch.randn_like(batch)
         sample, intermediate = edm_sampler(
             self.model,
             latents,
@@ -30,23 +46,6 @@ class EDM(pl.LightningModule):
             **kwargs,
         )
         return sample, intermediate
-
-
-class EDMLoss:
-    def __init__(self, P_mean=-1.2, P_std=1.2, sigma_data=1):
-        self.P_mean = P_mean
-        self.P_std = P_std
-        self.sigma_data = sigma_data
-
-    def __call__(self, net, images):
-        rnd_normal = torch.randn([images.shape[0], 1], device=images.device)
-        sigma = (rnd_normal * self.P_std + self.P_mean).exp()
-        weight = (sigma**2 + self.sigma_data**2) / (sigma * self.sigma_data) ** 2
-        y = images
-        n = torch.randn_like(y) * sigma
-        D_yn = net(y + n, sigma)
-        loss = weight * ((D_yn - y) ** 2)
-        return loss
 
 
 class EDMPrecond(torch.nn.Module):
