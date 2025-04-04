@@ -1,7 +1,11 @@
+from collections import namedtuple
+
 import sklearn
 import torch
 
 from dlam.utils import AttrDict
+
+Sample = namedtuple("Sample", ["target", "cond"])
 
 
 class HalfmoonDataset(torch.utils.data.Dataset):
@@ -23,5 +27,5 @@ class HalfmoonDataset(torch.utils.data.Dataset):
         return self.n_samples
 
     def __getitem__(self, idx):
-        return self.data[idx]
-        #  return AttrDict({"target": self.data[idx], "cond": self.cls[idx]})
+        #  return self.data[idx]
+        return AttrDict({"target": self.data[idx], "cond": self.cls[idx]})

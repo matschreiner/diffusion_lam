@@ -15,8 +15,8 @@ class NoiseModel(nn.Module):
             hidden_layers=hidden_layers,
         )
 
-    def forward(self, x, t_diff):
-        x = torch.cat([x, t_diff], dim=1)
+    def forward(self, batch, t_diff):
+        x = torch.cat([batch.corr, t_diff], dim=1)
 
         self.net(x)
         x = self.net(x)
