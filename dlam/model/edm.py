@@ -10,19 +10,39 @@ class EDM(pl.LightningModule):
     def __init__(
         self,
         noise_model,
+        P_mean=-1.2,
+        P_std=1.2,
+        sigma_data=1,
     ):
         super().__init__()
         self.noise_model = noise_model
-        self.loss = EDMLoss()
         self.model = EDMPrecond(noise_model)
 
+        # loss params
+        self.P_mean = P_mean
+        self.P_std = P_std
+        self.sigma_data = sigma_data
+
     def training_step(self, batch):
-        loss = self.loss(self.model, batch).mean()
+        loss = self.get_loss(batch).mean()
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
         return loss.mean()
 
-    def sample(self, example_batch, steps=18, **kwargs):
-        latents = torch.randn_like(example_batch)
+    def get_loss(self, batch):
+        target = batch.target
+
+        rnd_normal = torch.randn([target.shape[0], 1], device=target.device)
+        sigma = (rnd_normal * self.P_std + self.P_mean).exp()
+        weight = (sigma**2 + self.sigma_data**2) / (sigma * self.sigma_data) ** 2
+        n = torch.randn_like(target) * sigma
+
+        batch.corr = target + n
+        D_yn = self.model(batch, sigma)
+        loss = weight * ((D_yn - target) ** 2)
+        return loss
+
+    def sample(self, batch, steps=18, **kwargs):
+        latents = torch.randn_like(batch)
         sample, intermediate = edm_sampler(
             self.model,
             latents,
@@ -30,23 +50,6 @@ class EDM(pl.LightningModule):
             **kwargs,
         )
         return sample, intermediate
-
-
-class EDMLoss:
-    def __init__(self, P_mean=-1.2, P_std=1.2, sigma_data=1):
-        self.P_mean = P_mean
-        self.P_std = P_std
-        self.sigma_data = sigma_data
-
-    def __call__(self, net, images):
-        rnd_normal = torch.randn([images.shape[0], 1], device=images.device)
-        sigma = (rnd_normal * self.P_std + self.P_mean).exp()
-        weight = (sigma**2 + self.sigma_data**2) / (sigma * self.sigma_data) ** 2
-        y = images
-        n = torch.randn_like(y) * sigma
-        D_yn = net(y + n, sigma)
-        loss = weight * ((D_yn - y) ** 2)
-        return loss
 
 
 class EDMPrecond(torch.nn.Module):
@@ -63,20 +66,21 @@ class EDMPrecond(torch.nn.Module):
         self.sigma_data = sigma_data
         self.model = model
 
-    def forward(self, x, sigma):
-        x = x.to(torch.float32)
+    def forward(self, batch, sigma):
+        skip_corr = batch.corr.to(torch.float32).clone()
 
         c_skip = self.sigma_data**2 / (sigma**2 + self.sigma_data**2)
         c_out = sigma * self.sigma_data / (sigma**2 + self.sigma_data**2).sqrt()
         c_in = 1 / (self.sigma_data**2 + sigma**2).sqrt()
         c_noise = sigma.log() / 4
 
+        batch.corr = c_in * skip_corr
         F_x = self.model(
-            (c_in * x),
+            batch,
             c_noise,
         )
 
-        D_x = c_skip * x + c_out * F_x.to(torch.float32)
+        D_x = c_skip * skip_corr + c_out * F_x.to(torch.float32)
         return D_x
 
     def round_sigma(self, sigma):
