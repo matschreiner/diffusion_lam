@@ -1,5 +1,5 @@
 #  import lovely_tensors as lt
 
-from dlam import model, samplers, scheduler, toy_data, trainer
+from dlam import data, model, samplers, scheduler, trainer
 
 #  lt.monkey_patch()
