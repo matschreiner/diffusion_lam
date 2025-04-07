@@ -11,10 +11,11 @@ license = { text = "MIT" }
 dependencies = [
     "numpy",
     "torch",
+    "pytorch_lightning",
     "xarray",
     "cftime",
     "zarr",
-
+    'matplotlib',
 ]
 
 [tool.setuptools]
