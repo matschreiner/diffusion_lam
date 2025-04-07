@@ -31,8 +31,9 @@ class EDM(pl.LightningModule):
 
     def training_step(self, batch):
         print(self.global_step)
-        #  if self.global_step % 10000 == 0:
-        #      utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
+        if self.global_step % 10000 == 0:
+            utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
+            self.cuda()
 
         loss = self.get_loss(batch).mean()
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
