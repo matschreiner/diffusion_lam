@@ -3,6 +3,8 @@ import pytorch_lightning as pl
 import torch
 from tqdm import tqdm
 
+from dlam.model import ema
+
 # Code lifted from https://github.com/NVlabs/edm
 
 
@@ -17,6 +19,9 @@ class EDM(pl.LightningModule):
         super().__init__()
         self.noise_model = noise_model
         self.model = EDMPrecond(noise_model)
+        self.ema = ema.ExponentialMovingAverage(
+            self.noise_model.parameters(), decay=0.99
+        )
 
         # loss params
         self.P_mean = P_mean
@@ -28,10 +33,14 @@ class EDM(pl.LightningModule):
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
         return loss.mean()
 
+    def on_before_zero_grad(self, *args, **kwargs):  # style: disable
+        self.ema.update(self.noise_model.parameters())
+
     def get_loss(self, batch):
         target = batch.target
 
-        rnd_normal = torch.randn([target.shape[0], 1], device=target.device)
+        rnd_normal = get_random(target, torch.randn)
+
         sigma = (rnd_normal * self.P_std + self.P_mean).exp()
         weight = (sigma**2 + self.sigma_data**2) / (sigma * self.sigma_data) ** 2
         n = torch.randn_like(target) * sigma
@@ -49,6 +58,11 @@ class EDM(pl.LightningModule):
             **kwargs,
         )
         return sample, intermediate
+
+
+def get_random(target, rand_fn):
+    shape = [target.shape[0]] + [1] * (target.dim() - 1)
+    return rand_fn(size=shape, device=target.device)
 
 
 class EDMPrecond(torch.nn.Module):
@@ -74,6 +88,7 @@ class EDMPrecond(torch.nn.Module):
         c_noise = sigma.log() / 4
 
         batch.corr = c_in * skip_corr
+
         F_x = self.model(
             batch,
             c_noise,
@@ -89,7 +104,6 @@ class EDMPrecond(torch.nn.Module):
 def edm_sampler(
     net,
     batch,
-    randn_like=torch.randn_like,
     num_steps=18,
     sigma_min=0.002,
     sigma_max=80,
@@ -126,12 +140,15 @@ def edm_sampler(
                 if S_min <= t_cur <= S_max
                 else 0
             )
+
             t_hat = net.round_sigma(t_cur + gamma * t_cur)
-            x_hat = x_cur + (t_hat**2 - t_cur**2).sqrt() * S_noise * randn_like(x_cur)
+            x_hat = x_cur + (
+                t_hat**2 - t_cur**2
+            ).sqrt() * S_noise * torch.randn_like(x_cur)
 
             # Euler step.
-            t_hat = torch.ones((len(x_hat), 1), device=x_hat.device) * t_hat
-            t_next = torch.ones((len(x_hat), 1), device=x_hat.device) * t_next
+            t_hat = get_random(x_hat, torch.ones) * t_hat
+            t_next = get_random(x_hat, torch.ones) * t_next
 
             batch.corr = x_hat
 
