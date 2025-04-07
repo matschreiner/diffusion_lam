@@ -27,6 +27,7 @@ def main(config):
 
     noise_model = utils.get_component(config.noise_model)
     model = utils.get_component(config.score_based_model, noise_model=noise_model)
+    model.to("cuda")
 
     trainer.fit(model, dataloader)
 
