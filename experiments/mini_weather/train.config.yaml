@@ -1,0 +1,46 @@
+trainer:
+  optimizer_config:
+    module: torch.optim
+    name: Adam
+    kwargs:
+      lr: 0.001
+  # scheduler_config:
+  #   name: StepLR
+  #   kwargs:
+  #     step_size: 30
+  #     gamma: 0.99
+  kwargs:
+    max_steps: 2000
+    # max_steps: 5000
+    # max_epochs: 500
+
+dataset:
+  module: dlam.data.weather_dataset
+  name: WeatherDataset
+  kwargs:
+    zarr_path: storage/mini.zarr/
+    # len:
+
+dataloader:
+  kwargs:
+    batch_size: 10
+    shuffle: True
+
+score_based_model:
+  module: dlam.model.edm
+  name: EDM
+
+noise_model:
+  module: dlam.model.unet
+  name: UNetConditionalNoise
+  kwargs:
+    n_features: 36
+# noise_model:
+#   module: dlam.model.noise_model
+#   name: ConditionalNoiseModelCNN
+#   kwargs:
+#     n_features: 23
+
+evaluation:
+  module: dlam.evaluate.evaluate_weather
+  name: evaluate_model
