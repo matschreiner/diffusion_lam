@@ -21,8 +21,8 @@ def main(config):
         config.trainer.get("optimizer_config", {}),
         **config.trainer.get("kwargs", {}),
         profiler=SimpleProfiler(dirpath=profiler_dir_path, filename=profiler_filename),
-        strategy="single_device",
         accelerator="gpu",
+        devices=1,
     )
 
     noise_model = utils.get_component(config.noise_model)
