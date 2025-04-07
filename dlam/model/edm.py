@@ -30,7 +30,7 @@ class EDM(pl.LightningModule):
         self.sigma_data = sigma_data
 
     def training_step(self, batch):
-        if self.global_step % 1000 == 0:
+        if self.global_step % 50000 == 0:
             utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
             self.cuda()
 
