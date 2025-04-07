@@ -30,10 +30,9 @@ class EDM(pl.LightningModule):
         self.sigma_data = sigma_data
 
     def training_step(self, batch):
-        __import__("pdb").set_trace()  # TODO delme
         print(self.global_step)
-        if self.global_step % 10000 == 0:
-            utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
+        #  if self.global_step % 10000 == 0:
+        #      utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
 
         loss = self.get_loss(batch).mean()
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
