@@ -10,7 +10,7 @@ trainer:
   #     step_size: 30
   #     gamma: 0.99
   kwargs:
-    max_steps: 2000
+    max_steps: 1_000_000
     # max_steps: 5000
     # max_epochs: 500
 
@@ -19,7 +19,6 @@ dataset:
   name: WeatherDataset
   kwargs:
     zarr_path: storage/mini.zarr/
-    # len:
 
 dataloader:
   kwargs:
