@@ -12,7 +12,8 @@ def main():
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=1)
     batch = next(iter(dataloader))
 
-    model = utils.load("/tmp/model.pkl")
+    #  model = utils.load("/tmp/model.pkl")
+    model = utils.load("results/model0.pkl")
     #  utils.save(model, "10ksteps_model.pkl")
     n_samples = 3
 
