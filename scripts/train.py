@@ -27,6 +27,9 @@ def main(config):
     model = utils.get_component(config.score_based_model, noise_model=noise_model)
 
     trainer.fit(model, dataloader)
+
+    os.makedirs("results", exist_ok=True)
+    utils.save(model.cpu(), "results/final_model.pkl")
     utils.get_component(config.evaluation, model=model, dataset=dataset)
 
 

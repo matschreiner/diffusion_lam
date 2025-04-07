@@ -17,9 +17,9 @@ def generate_dataset():
 
     #  data = data.isel(x=slice(0, 50, 100), y=slice(0, 50, 100), time=slice(0, 100))
     data = data.isel(
-        x=slice(0, 160, 5),
-        y=slice(0, 160, 5),
-        time=slice(0, 100),
+        x=slice(0, 256, 2),
+        y=slice(0, 256, 2),
+        time=slice(0, 1000),
     )
 
     del data["danra_projection"]
