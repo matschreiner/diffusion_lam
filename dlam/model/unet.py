@@ -29,6 +29,9 @@ class UNetConditionalNoise(nn.Module):
         return self.net(in_)
 
 
+# Code lifted from https://github.com/milesial/Pytorch-UNet
+
+
 class UNet(nn.Module):
     def __init__(self, in_features, out_features, bilinear=False):
         super().__init__()
