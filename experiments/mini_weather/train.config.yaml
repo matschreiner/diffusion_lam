@@ -30,10 +30,10 @@ score_based_model:
   name: EDM
 
 noise_model:
-  module: dlam.model.unet
-  name: UNetConditionalNoise
+  module: dlam.model.aunet
+  name: Unet
   kwargs:
-    n_features: 36
+    dim: 36
 # noise_model:
 #   module: dlam.model.noise_model
 #   name: ConditionalNoiseModelCNN
