@@ -30,7 +30,7 @@ class EDM(pl.LightningModule):
         self.sigma_data = sigma_data
 
     def training_step(self, batch):
-        if self.global_step % 50000 == 0:
+        if self.global_step % 2000 == 0:
             utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
             self.cuda()
 
@@ -120,9 +120,9 @@ def edm_sampler(
 ):
     sigma_min = max(sigma_min, net.sigma_min)
     sigma_max = min(sigma_max, net.sigma_max)
-    latents = torch.randn_like(batch.target)
+    latents = torch.randn_like(batch.cond)
 
-    step_indices = torch.arange(num_steps, dtype=torch.float64, device=latents.device)
+    step_indices = torch.arange(num_steps, dtype=torch.float32, device=latents.device)
     t_steps = (
         sigma_max ** (1 / rho)
         + step_indices
