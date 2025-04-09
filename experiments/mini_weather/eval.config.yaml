@@ -1,5 +1,5 @@
 steps: 50
 example_forecast: experiments/mini_weather/example_forecast.pkl
-ensemble_members: 5
-forecasting_steps: 10
-model: model800000.pkl
+ensemble_members: 1
+forecasting_steps: 2
+model: model4000.pkl
