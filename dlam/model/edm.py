@@ -20,9 +20,9 @@ class EDM(pl.LightningModule):
         super().__init__()
         self.noise_model = noise_model
         self.model = EDMPrecond(noise_model)
-        self.ema = ema.ExponentialMovingAverage(
-            self.noise_model.parameters(), decay=0.99
-        )
+        #  self.ema = ema.ExponentialMovingAverage(
+        #      self.noise_model.parameters(), decay=0.99
+        #  )
 
         # loss params
         self.P_mean = P_mean
@@ -38,8 +38,8 @@ class EDM(pl.LightningModule):
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
         return loss.mean()
 
-    def on_before_zero_grad(self, *args, **kwargs):  # style: disable
-        self.ema.update(self.noise_model.parameters())
+    #  def on_before_zero_grad(self, *args, **kwargs):  # style: disable
+    #      self.ema.update(self.noise_model.parameters())
 
     def get_loss(self, batch):
         target = batch.target
@@ -76,7 +76,7 @@ class EDMPrecond(torch.nn.Module):
         model,
         sigma_min=0,  # Minimum supported noise level.
         sigma_max=float("inf"),  # Maximum supported noise level.
-        sigma_data=0.5,  # Expected standard deviation of the training data.
+        sigma_data=1,  # Expected standard deviation of the training data.
     ):
         super().__init__()
         self.sigma_min = sigma_min

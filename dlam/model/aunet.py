@@ -247,8 +247,6 @@ class SinusoidalPosEmb(Module):
         half_dim = self.dim // 2
         emb = math.log(self.theta) / (half_dim - 1)
         emb = torch.exp(torch.arange(half_dim, device=device) * -emb)
-        __import__("pdb").set_trace()  # TODO delme kj:w
-
         emb = x[:, None] * emb[None, :]
         emb = torch.cat((emb.sin(), emb.cos()), dim=-1)
         return emb
@@ -557,6 +555,8 @@ class Unet(Module):
     def forward(self, batch, time, x_self_cond=None):
         x = batch.corr
         time.squeeze_()
+        if time.dim() == 0:
+            time.unsqueeze_(0)
 
         assert all(
             [divisible_by(d, self.downsample_factor) for d in x.shape[-2:]]
