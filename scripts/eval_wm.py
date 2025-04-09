@@ -12,24 +12,25 @@ def main():
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=1)
     batch = next(iter(dataloader))
 
-    #  model = utils.load("/tmp/model.pkl")
-    model = utils.load("results/model0.pkl")
-    #  utils.save(model, "10ksteps_model.pkl")
-    n_samples = 3
+    #  model = utils.load("model800000.pkl")
+    #  n_samples = 100
+    #  samples = ancestral_sampling(model, batch, n_samples)
+    #  utils.save(samples, "samples.pkl")
 
-    samples = ancestral_sampling(model, batch, n_samples)
+    samples = utils.load("samples.pkl")
     ground_truth = [dataset[i].cond.squeeze() for i in range(n_samples)]
-    data = list(zip(samples, ground_truth))
-    #  frame = data[1][0][0]
-    #  plot(samples[1][0])
-    #  plt.show()
+
+    feature = 10
+    fig, axs = plt.subplots(1, 2, figsize=(10, 5))
 
     def plot_fn(ax, data):
-        ax.imshow(data[0].cpu().numpy(), cmap="viridis")
-        ax.set_title("t2m")
+        ax[0].imshow(data[0][feature].cpu().numpy(), cmap="viridis")
+        ax[1].imshow(data[1][feature].cpu().numpy(), cmap="viridis")
+        ax[0].set_title("t2m")
 
-    ani = animate.animate(samples, plot_fn)
+    ani = animate.animate(list(zip(samples, ground_truth)), plot_fn, fig=fig, ax=axs)
     plt.show()
+    #  plt.show()
 
     #  plot(frame)
 
@@ -40,8 +41,10 @@ def ancestral_sampling(model, batch, n_samples):
     samples = [batch.cond.squeeze()]
 
     for i in range(n_samples):
-        sample, _ = model.sample(batch, steps=100)
+        sample, intermediate = model.sample(batch, steps=20)
         batch.cond = sample
+
+        plt.show()
 
         samples.append(sample.squeeze())
 
