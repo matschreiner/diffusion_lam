@@ -16,6 +16,7 @@ dependencies = [
     "cftime",
     "zarr",
     'matplotlib',
+    'einops'
 ]
 
 [tool.setuptools]
