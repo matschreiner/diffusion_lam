@@ -20,9 +20,6 @@ class EDM(pl.LightningModule):
         super().__init__()
         self.noise_model = noise_model
         self.model = EDMPrecond(noise_model)
-        #  self.ema = ema.ExponentialMovingAverage(
-        #      self.noise_model.parameters(), decay=0.99
-        #  )
 
         # loss params
         self.P_mean = P_mean
@@ -30,16 +27,9 @@ class EDM(pl.LightningModule):
         self.sigma_data = sigma_data
 
     def training_step(self, batch):
-        if self.global_step % 2000 == 0:
-            utils.save(self.cpu(), f"results/model{self.global_step}.pkl")
-            self.cuda()
-
         loss = self.get_loss(batch).mean()
         self.log("loss", loss.mean(), prog_bar=True, logger=True)
         return loss.mean()
-
-    #  def on_before_zero_grad(self, *args, **kwargs):  # style: disable
-    #      self.ema.update(self.noise_model.parameters())
 
     def get_loss(self, batch):
         target = batch.target
