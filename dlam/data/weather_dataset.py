@@ -1,7 +1,11 @@
+from functools import lru_cache
+
 import matplotlib.pyplot as plt
+import neural_lam
 import numpy as np
 import torch
 import xarray
+from neural_lam.datastore.mdp import MDPDatastore
 
 from dlam.utils import AttrDict
 from dlam.vis.animate import animate
@@ -40,6 +44,38 @@ class WeatherDataset(torch.utils.data.Dataset):
         target = self.data[idx + 1]
 
         return AttrDict({"target": target, "cond": cond})
+
+
+class WeatherDatasetFromDatastore(neural_lam.weather_dataset.WeatherDataset):
+    def __init__(self, datastore, precision=torch.float32):
+        datastore = MDPDatastore(datastore) if isinstance(datastore, str) else datastore
+
+        super().__init__(datastore)
+        self.xy = torch.tensor(datastore.get_xy("state", stacked=False))
+        self.static = torch.tensor(
+            datastore.get_dataarray(
+                category="static", split=None, standardize=True
+            ).values
+        )
+        self.precision = precision
+        self.boundary_mask = torch.tensor(datastore.boundary_mask.values).to(precision)
+        self.interior_mask = 1 - self.boundary_mask
+
+    @lru_cache(maxsize=20)
+    def __getitem__(self, index):
+        cond_states, target_states, forcing, times = super().__getitem__(index)
+
+        item = {}
+        item["static"] = self.static.to(self.precision)
+        item["xy"] = self.xy.to(self.precision)
+        item["forcing"] = forcing.to(self.precision)
+        item["cond"] = cond_states.to(self.precision)
+        item["target"] = target_states.to(self.precision)[0]
+        item["time"] = times.to(self.precision)
+        item["bounday_mask"] = self.boundary_mask
+        item["interior_mask"] = self.interior_mask
+
+        return AttrDict(item)
 
 
 if __name__ == "__main__":
