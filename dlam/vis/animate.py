@@ -18,7 +18,7 @@ def animate(data, fn, fig=None, ax=None, **kwargs):
             ax.clear()
             ax.set_xlabel("frame: {}".format(i))
 
-        fn(ax, data[i])
+        fn(ax=ax, data=data[i])
 
     ani = animation.FuncAnimation(fig, update_frame, frames=range(len(data)), **kwargs)
 
