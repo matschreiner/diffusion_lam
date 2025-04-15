@@ -1,12 +1,10 @@
-from functools import lru_cache
-
 import pytorch_lightning as pl
 import torch
 import torch_geometric as pyg
 from neural_lam import create_graph, utils
-from neural_lam.datastore.mdp import MDPDatastore
 from neural_lam.interaction_net import InteractionNet
-from neural_lam.weather_dataset import WeatherDataset
+
+from dlam.model.mlp import MLP
 
 
 class Graph(torch.nn.Module):
@@ -86,9 +84,12 @@ class GraphLAM(pl.LightningModule):
         cond1 = batch["cond"][:, 0]
         cond2 = batch["cond"][:, 1]
         forcing = batch["forcing"][:, 1]
-        batch_size = len(static)
-
         grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
+
+        return self._forward(grid_features)
+
+    def _forward(self, grid_features):
+        batch_size = len(grid_features)
 
         grid_emb = self.grid_embedder(grid_features)
         mesh_emb = self.mesh_embedder(self.graph["mesh_static_features"])
@@ -139,83 +140,24 @@ class GraphLAM(pl.LightningModule):
         return graph
 
 
+class GraphLAMNoise(GraphLAM):
+    def forward(self, batch, t_diff):
+        static = batch["static"]
+        cond1 = batch["cond"][:, 0]
+        cond2 = batch["cond"][:, 1]
+        forcing = batch["forcing"][:, 1]
+
+        grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
+
+        t_diff = t_diff.repeat(1, grid_features.shape[1], 1)
+        grid_features = torch.cat([grid_features, batch.corr, t_diff], dim=-1)
+
+        out = self._forward(grid_features)
+        return out
+
+
 def expand_to_batch(x, batch_size):
     """
     Expand tensor with initial batch dimension
     """
     return x.unsqueeze(0).expand(batch_size, -1, -1)
-
-
-class WeatherDataset2(WeatherDataset):
-    def __init__(self, datastore, precision=torch.float32):
-        datastore = MDPDatastore(datastore) if isinstance(datastore, str) else datastore
-        super().__init__(datastore)
-        self.datastore = datastore
-
-        self.xy = torch.tensor(datastore.get_xy("state", stacked=False))
-        self.static = torch.tensor(
-            self.datastore.get_dataarray(
-                category="static", split=None, standardize=True
-            ).values
-        )
-        self.precision = precision
-        self.boundary_mask = torch.tensor(self.datastore.boundary_mask.values).to(
-            precision
-        )
-        self.interior_mask = 1 - self.boundary_mask
-
-    @lru_cache(maxsize=20)
-    def __getitem__(self, index):
-        cond_states, target_states, forcing, times = super().__getitem__(index)
-
-        item = {}
-        item["static"] = self.static.to(self.precision)
-        item["xy"] = self.xy.to(self.precision)
-        item["forcing"] = forcing.to(self.precision)
-        item["cond"] = cond_states.to(self.precision)
-        item["target"] = target_states.to(self.precision)
-        item["time"] = times.to(self.precision)
-        item["bounday_mask"] = self.boundary_mask
-        item["interior_mask"] = self.interior_mask
-
-        return item
-        return cond_states, target_states, forcing, times
-
-
-class MLP(torch.nn.Module):
-    def __init__(self, in_dim, out_dim, hidden_dim=None, hidden_layers=1):
-        super().__init__()
-
-        if hidden_dim is None:
-            hidden_dim = out_dim
-
-        modules = [torch.nn.Linear(in_dim, hidden_dim, bias=True)]
-
-        for i in range(hidden_layers):
-            modules.append(torch.nn.SiLU())
-            layer_in_dim = hidden_dim
-            layer_out_dim = hidden_dim if i < hidden_layers - 1 else out_dim
-            modules.append(torch.nn.Linear(layer_in_dim, layer_out_dim, bias=True))
-
-        self.net = torch.nn.Sequential(*modules)
-
-    def forward(self, x):
-        return self.net(x)
-
-
-def main():
-    # Third-party
-    from torch.utils.data import DataLoader
-
-    #  graph_path = "tests/datastore_examples/mdp/danra_100m_winds/graph/1level"
-    datastore = "../neural-lam/experiments/test/example.danra.yaml"
-    dataset = WeatherDataset2(datastore)
-    model = GraphLAM(domain=dataset.xy)
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
-    batch = next(iter(dataloader))
-    loss = model(batch)
-    print(loss)
-
-
-if __name__ == "__main__":
-    main()
