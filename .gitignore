@@ -4,6 +4,8 @@
 *.zarr
 lightning_logs
 storage
+*.ckpt
+experiments
 
 !test/resources/*
 results
