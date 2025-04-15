@@ -11,7 +11,7 @@ class MLP(torch.nn.Module):
         modules = [torch.nn.Linear(in_dim, hidden_dim, bias=True)]
 
         for i in range(hidden_layers):
-            modules.append(torch.nn.ReLU())
+            modules.append(torch.nn.SiLU())
             layer_in_dim = hidden_dim
             layer_out_dim = hidden_dim if i < hidden_layers - 1 else out_dim
             modules.append(torch.nn.Linear(layer_in_dim, layer_out_dim, bias=True))
