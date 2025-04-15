@@ -1,19 +1,12 @@
-# Standard library
-import os
-import pickle as pkl
+from functools import lru_cache
 
-# Third-party
 import pytorch_lightning as pl
 import torch
 import torch_geometric as pyg
-
-# First-party
 from neural_lam import create_graph, utils
 from neural_lam.datastore.mdp import MDPDatastore
 from neural_lam.interaction_net import InteractionNet
 from neural_lam.weather_dataset import WeatherDataset
-
-from dlam.utils import Timer
 
 
 class Graph(torch.nn.Module):
@@ -86,11 +79,9 @@ class GraphLAM(pl.LightningModule):
                 for net in processor_nets
             ],
         )
+        self.save_hyperparameters()
 
     def forward(self, batch):
-        if not hasattr(self, "graph"):
-            self.graph = self.create_graph(batch["xy"])
-
         static = batch["static"]
         cond1 = batch["cond"][:, 0]
         cond2 = batch["cond"][:, 1]
@@ -122,13 +113,11 @@ class GraphLAM(pl.LightningModule):
         return output
 
     def training_step(self, batch, _):
-        t = Timer()
         out = self.forward(batch)
         target = batch["target"][:, 0]
 
         loss = torch.nn.functional.mse_loss(out, target).mean()
-        self.log("train_loss", loss, prog_bar=True, logger=True)
-        t.end()
+
         return loss
 
     def configure_optimizer(self):
@@ -175,8 +164,8 @@ class WeatherDataset2(WeatherDataset):
         )
         self.interior_mask = 1 - self.boundary_mask
 
+    @lru_cache(maxsize=20)
     def __getitem__(self, index):
-        timer = Timer()
         cond_states, target_states, forcing, times = super().__getitem__(index)
 
         item = {}
@@ -189,7 +178,7 @@ class WeatherDataset2(WeatherDataset):
         item["bounday_mask"] = self.boundary_mask
         item["interior_mask"] = self.interior_mask
 
-        timer.end()
+        return item
         return cond_states, target_states, forcing, times
 
 
