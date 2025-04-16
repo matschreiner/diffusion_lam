@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 def animate(data, fn, fig=None, ax=None, **kwargs):
 
-    if ax is None or fig is None:
+    if ax is None:
         fig, ax = plt.subplots()
 
     def update_frame(i):
