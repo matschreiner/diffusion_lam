@@ -61,22 +61,17 @@ class GraphLAM(pl.LightningModule):
             hidden_layers=mp_layers,
             update_edges=False,
         )
-        processor_nets = [
-            InteractionNet(
-                self.graph["m2m_edge_index"],
-                input_dim=hidden_dim,
-                hidden_layers=mp_layers,
-            )
-            for _ in range(processor_layers)
-        ]
-
-        self.processor = pyg.nn.Sequential(
-            "mesh_rep, edge_rep",
+        self.processor_nets = torch.nn.ModuleList(
             [
-                (net, "mesh_rep, mesh_rep, edge_rep -> mesh_rep, edge_rep")
-                for net in processor_nets
-            ],
+                InteractionNet(
+                    self.graph["m2m_edge_index"],
+                    input_dim=hidden_dim,
+                    hidden_layers=mp_layers,
+                )
+                for _ in range(processor_layers)
+            ]
         )
+
         self.save_hyperparameters()
 
     def forward(self, batch):
@@ -104,10 +99,12 @@ class GraphLAM(pl.LightningModule):
         m2m_edge_emb = expand_to_batch(m2m_edge_emb, batch_size)
 
         mesh_rep = self.g2m_gnn(grid_emb, mesh_emb, g2m_edge_emb)
-        mesh_rep, _ = self.processor(mesh_rep, m2m_edge_emb)
+        for processor in self.processor_nets:
+            mesh_rep, m2m_edge_emb = processor(mesh_rep, mesh_rep, m2m_edge_emb)
 
         grid_rep = self.grid_encoder(grid_emb)
         grid_rep = grid_rep + self.m2g_gnn(mesh_rep, grid_rep, m2g_edge_emb)
+        grid_rep = self.m2g_gnn(mesh_rep, grid_rep, m2g_edge_emb)
 
         output = self.readout(grid_rep)
 
@@ -115,9 +112,7 @@ class GraphLAM(pl.LightningModule):
 
     def training_step(self, batch, _):
         out = self.forward(batch)
-        target = batch["target"][:, 0]
-
-        loss = torch.nn.functional.mse_loss(out, target).mean()
+        loss = torch.nn.functional.mse_loss(out, batch.target).mean()
 
         return loss
 
@@ -149,7 +144,9 @@ class GraphLAMNoise(GraphLAM):
 
         grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
 
-        t_diff = t_diff.repeat(1, grid_features.shape[1], 1)
+        print(t_diff)
+        t_diff = t_diff[:, None, None].expand((-1, grid_features.shape[1], 1))
+
         grid_features = torch.cat([grid_features, batch.corr, t_diff], dim=-1)
 
         out = self._forward(grid_features)
