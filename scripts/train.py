@@ -15,41 +15,51 @@ def main(config):
     dataset = utils.get_component(config.dataset)
     dataloader = DataLoader(dataset, **config.dataloader.get("kwargs", {}))
 
-    loss_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=f"{config.path}/checkpoints",
-        filename="best",
-        monitor="loss",
-        mode="min",
-        save_last=True,
-    )
-    timedelta_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=f"{config.path}/checkpoints",
-        filename="timedelta",
-        train_time_interval=timedelta(seconds=60),
-    )
+    ckpt_pth = f"{config.path}/checkpoints"
+    import shutil
 
+    shutil.rmtree(ckpt_pth, ignore_errors=True)
     trainer = Trainer(
         config.trainer.get("scheduler_config", {}),
         config.trainer.get("optimizer_config", {}),
         **config.trainer.get("kwargs", {}),
         accelerator=dlam.DEVICE,
         devices=1,
-        callbacks=[loss_checkpoint_callback, timedelta_checkpoint_callback],
+        callbacks=get_checkpoint_callbacks(dirpath=ckpt_pth),
         log_every_n_steps=1,
     )
 
-    if "score_base_model" in config:
-        noise_model = utils.get_component(config.noise_model).to(dlam.DEVICE)
-        model = utils.get_component(config.score_based_model, noise_model=noise_model)
+    if "noise_based_model" in config:
+        noise_model = utils.get_component(config.noise_model, domain=dataset.xy)
+        model = utils.get_component(config.noise_based_model, noise_model=noise_model)
 
     elif "model" in config:
         model = utils.get_component(config.model, domain=dataset.xy)
 
     model.to(dlam.DEVICE)
-
     trainer.fit(model, dataloader)
-
     os.makedirs("results", exist_ok=True)
+
+
+def get_checkpoint_callbacks(dirpath):
+    loss_checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        dirpath=dirpath,
+        filename="best",
+        monitor="loss",
+        mode="min",
+        save_last=True,
+    )
+
+    timedelta_checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        dirpath=dirpath,
+        filename="timedelta",
+        train_time_interval=timedelta(seconds=5),
+    )
+
+    return [
+        loss_checkpoint_callback,
+        timedelta_checkpoint_callback,
+    ]
 
 
 if __name__ == "__main__":
