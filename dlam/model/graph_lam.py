@@ -1,9 +1,8 @@
 import pytorch_lightning as pl
 import torch
-import torch_geometric as pyg
 from neural_lam import create_graph, utils
-from neural_lam.interaction_net import InteractionNet
 
+from dlam.model.interaction_net import InteractionNet
 from dlam.model.mlp import MLP
 
 
@@ -49,22 +48,19 @@ class GraphLAM(pl.LightningModule):
         self.readout = MLP(hidden_dim, target_dim, hidden_layers=4)
 
         self.m2g_gnn = InteractionNet(
-            self.graph["m2g_edge_index"],
-            hidden_dim,
+            input_dim=hidden_dim,
             hidden_layers=mp_layers,
             update_edges=False,
         )
 
         self.g2m_gnn = InteractionNet(
-            self.graph["g2m_edge_index"],
-            hidden_dim,
+            input_dim=hidden_dim,
             hidden_layers=mp_layers,
             update_edges=False,
         )
         self.processor_nets = torch.nn.ModuleList(
             [
                 InteractionNet(
-                    self.graph["m2m_edge_index"],
                     input_dim=hidden_dim,
                     hidden_layers=mp_layers,
                 )
@@ -98,12 +94,18 @@ class GraphLAM(pl.LightningModule):
         m2g_edge_emb = expand_to_batch(m2g_edge_emb, batch_size)
         m2m_edge_emb = expand_to_batch(m2m_edge_emb, batch_size)
 
-        mesh_rep = self.g2m_gnn(grid_emb, mesh_emb, g2m_edge_emb)
+        mesh_rep = self.g2m_gnn(
+            grid_emb, mesh_emb, g2m_edge_emb, self.graph["m2g_edge_index"]
+        )
         for processor in self.processor_nets:
-            mesh_rep, m2m_edge_emb = processor(mesh_rep, mesh_rep, m2m_edge_emb)
+            mesh_rep, m2m_edge_emb = processor(
+                mesh_rep, mesh_rep, m2m_edge_emb, self.graph["m2m_edge_index"]
+            )
 
         grid_rep = self.grid_encoder(grid_emb)
-        grid_rep = grid_rep + self.m2g_gnn(mesh_rep, grid_rep, m2g_edge_emb)
+        grid_rep = grid_rep + self.m2g_gnn(
+            mesh_rep, grid_rep, m2g_edge_emb, self.graph["m2g_edge_index"]
+        )
         grid_rep = self.m2g_gnn(mesh_rep, grid_rep, m2g_edge_emb)
 
         output = self.readout(grid_rep)
