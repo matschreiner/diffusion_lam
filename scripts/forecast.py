@@ -1,21 +1,13 @@
 from pprint import pprint
 
 import matplotlib.pyplot as plt
-import mlflow.pytorch
-from pytorch_lightning.loggers import MLFlowLogger
 
-import dlam
 from dlam import utils
 from dlam.model.graph_lam import GraphLAM
 from dlam.vis.animate import animate
 
 
 def main(config):
-
-    model_uri = f"runs:/skillful-cat-197/model"
-    loaded_model = mlflow.pytorch.load_model(model_uri)
-    __import__("pdb").set_trace()  # TODO delme
-
     model = GraphLAM.load_from_checkpoint(config.model.kwargs.checkpoint)
     model.eval()
     dataset = utils.get_component(config.dataset)
