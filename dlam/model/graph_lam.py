@@ -24,7 +24,7 @@ class Graph(torch.nn.Module):
 class GraphLAM(pl.LightningModule):
     def __init__(
         self,
-        domain,
+        #  domain,
         in_dim=18,
         target_dim=2,
         mesh_dim=2,
@@ -35,8 +35,8 @@ class GraphLAM(pl.LightningModule):
     ):
         super().__init__()
 
-        graph = self.create_graph(domain)
-        self.graph = Graph(graph)
+        #  graph = self.create_graph(domain)
+        #  self.graph = Graph(graph)
 
         self.mesh_embedder = MLP(mesh_dim, hidden_dim)
         self.grid_embedder = MLP(in_dim, hidden_dim)
@@ -77,17 +77,17 @@ class GraphLAM(pl.LightningModule):
         forcing = batch["forcing"][:, 1]
         grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
 
-        return self._forward(grid_features)
+        return self._forward(grid_features, graph)
 
-    def _forward(self, grid_features):
+    def _forward(self, grid_features, graph):
         batch_size = len(grid_features)
 
         grid_emb = self.grid_embedder(grid_features)
-        mesh_emb = self.mesh_embedder(self.graph["mesh_static_features"])
+        mesh_emb = self.mesh_embedder(graph["mesh_static_features"])
 
-        g2m_edge_emb = self.g2m_embedder(self.graph["g2m_features"])
-        m2g_edge_emb = self.m2g_embedder(self.graph["m2g_features"])
-        m2m_edge_emb = self.m2m_embedder(self.graph["m2m_features"])
+        g2m_edge_emb = self.g2m_embedder(graph["g2m_features"])
+        m2g_edge_emb = self.m2g_embedder(graph["m2g_features"])
+        m2m_edge_emb = self.m2m_embedder(graph["m2m_features"])
 
         mesh_emb = expand_to_batch(mesh_emb, batch_size)
         g2m_edge_emb = expand_to_batch(g2m_edge_emb, batch_size)
@@ -95,18 +95,17 @@ class GraphLAM(pl.LightningModule):
         m2m_edge_emb = expand_to_batch(m2m_edge_emb, batch_size)
 
         mesh_rep = self.g2m_gnn(
-            grid_emb, mesh_emb, g2m_edge_emb, self.graph["m2g_edge_index"]
+            grid_emb, mesh_emb, g2m_edge_emb, graph["g2m_edge_index"]
         )
         for processor in self.processor_nets:
             mesh_rep, m2m_edge_emb = processor(
-                mesh_rep, mesh_rep, m2m_edge_emb, self.graph["m2m_edge_index"]
+                mesh_rep, mesh_rep, m2m_edge_emb, graph["m2m_edge_index"]
             )
 
         grid_rep = self.grid_encoder(grid_emb)
         grid_rep = grid_rep + self.m2g_gnn(
-            mesh_rep, grid_rep, m2g_edge_emb, self.graph["m2g_edge_index"]
+            mesh_rep, grid_rep, m2g_edge_emb, graph["m2g_edge_index"]
         )
-        grid_rep = self.m2g_gnn(mesh_rep, grid_rep, m2g_edge_emb)
 
         output = self.readout(grid_rep)
 
