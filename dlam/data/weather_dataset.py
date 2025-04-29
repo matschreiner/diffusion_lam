@@ -61,6 +61,9 @@ class WeatherDatasetFromDatastore(neural_lam.weather_dataset.WeatherDataset):
         self.boundary_mask = torch.tensor(datastore.boundary_mask.values).to(precision)
         self.interior_mask = 1 - self.boundary_mask
 
+    def add_graph(self, create_graph):
+        self.graph = create_graph(self.xy)
+
     @lru_cache(maxsize=20)
     def __getitem__(self, index):
         cond_states, target_states, forcing, times = super().__getitem__(index)
@@ -74,6 +77,9 @@ class WeatherDatasetFromDatastore(neural_lam.weather_dataset.WeatherDataset):
         item["time"] = times.to(self.precision)
         item["bounday_mask"] = self.boundary_mask
         item["interior_mask"] = self.interior_mask
+
+        if hasattr(self, "graph"):
+            item["graph"] = self.graph
 
         return AttrDict(item)
 
