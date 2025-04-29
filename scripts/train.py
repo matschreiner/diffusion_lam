@@ -31,10 +31,17 @@ def main(config):
 
     if "noise_based_model" in config:
         noise_model = utils.get_component(config.noise_model, domain=dataset.xy)
+        create_graph = (
+            noise_model.create_graph if hasattr(noise_model, "create_graph") else None
+        )
         model = utils.get_component(config.noise_based_model, noise_model=noise_model)
 
     elif "model" in config:
-        model = utils.get_component(config.model, domain=dataset.xy)
+        model = utils.get_component(config.model)
+        create_graph = model.create_graph if hasattr(model, "create_graph") else None
+
+    if create_graph:
+        dataset.add_graph(create_graph)
 
     model.to(dlam.DEVICE)
     trainer.fit(model, dataloader)
