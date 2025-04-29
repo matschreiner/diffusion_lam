@@ -51,8 +51,6 @@ class InteractionNet(pyg.nn.MessagePassing):
             # Default to input dim if not explicitly given
             hidden_dim = input_dim
 
-        # Make both sender and receiver indices of edge_index start at 0
-
         # Create MLPs
         edge_mlp_recipe = [3 * input_dim] + [hidden_dim] * (hidden_layers + 1)
         aggr_mlp_recipe = [2 * input_dim] + [hidden_dim] * (hidden_layers + 1)
@@ -90,10 +88,11 @@ class InteractionNet(pyg.nn.MessagePassing):
             of edges
         """
 
+        # Make both sender and receiver indices of edge_index start at 0
         edge_index = edge_index - edge_index.min(dim=1, keepdim=True)[0]
         # Store number of receiver nodes according to edge_index
-        num_rec = edge_index[1].max() + 1
-        edge_index[0] = edge_index[0] + num_rec  # Make sender indices after rec
+        self.num_rec = edge_index[1].max() + 1
+        edge_index[0] = edge_index[0] + self.num_rec  # Make sender indices after rec
 
         # Always concatenate to [rec_nodes, send_nodes] for propagation,
         # but only aggregate to rec_nodes
