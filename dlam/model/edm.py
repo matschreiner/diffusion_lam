@@ -39,6 +39,7 @@ class EDM(pl.LightningModule):
             prog_bar=True,
             logger=True,
         )
+        self.log("log_loss", loss.mean().log10(), logger=True)
 
         return loss.mean()
 
