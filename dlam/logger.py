@@ -14,11 +14,14 @@ class ImageMLFlowLogger(pl.loggers.MLFlowLogger):
     of version `2.0.3` at least.
     """
 
-    def __init__(self, experiment_name, tracking_uri, run_name):
-        super().__init__(experiment_name=experiment_name, tracking_uri=tracking_uri)
+    def __init__(self, experiment_name, tracking_uri, **kwargs):
+        super().__init__(
+            experiment_name=experiment_name, tracking_uri=tracking_uri, **kwargs
+        )
 
         mlflow.start_run(run_id=self.run_id, log_system_metrics=True)
-        mlflow.set_tag("mlflow.runName", run_name)
+        if "run_name" in kwargs:
+            mlflow.set_tag("mlflow.runName", kwargs["run_name"])
         mlflow.log_param("run_id", self.run_id)
 
     @property
