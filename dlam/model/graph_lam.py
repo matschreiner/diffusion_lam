@@ -80,6 +80,7 @@ class GraphLAM(pl.LightningModule):
         return self._forward(grid_features, graph)
 
     def _forward(self, grid_features, graph):
+        graph = self.use_shared_graph(graph)
         batch_size = len(grid_features)
 
         grid_emb = self.grid_embedder(grid_features)
@@ -110,6 +111,10 @@ class GraphLAM(pl.LightningModule):
         output = self.readout(grid_rep)
 
         return output
+
+    def use_shared_graph(self, graph):
+        graph = {key: graph[key][0] for key in graph if len(graph[key]) != 0}
+        return graph
 
     def training_step(self, batch, _):
         out = self.forward(batch)
@@ -145,12 +150,11 @@ class GraphLAMNoise(GraphLAM):
 
         grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
 
-        print(t_diff)
         t_diff = t_diff[:, None, None].expand((-1, grid_features.shape[1], 1))
 
         grid_features = torch.cat([grid_features, batch.corr, t_diff], dim=-1)
 
-        out = self._forward(grid_features)
+        out = self._forward(grid_features, batch.graph)
         return out
 
 
