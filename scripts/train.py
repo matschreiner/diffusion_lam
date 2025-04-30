@@ -15,22 +15,20 @@ def main(config):
     dataset = utils.get_component(config.dataset)
     dataloader = DataLoader(dataset, **config.dataloader.get("kwargs", {}))
 
-    ckpt_pth = f"{config.path}/checkpoints"
-    import shutil
-
-    shutil.rmtree(ckpt_pth, ignore_errors=True)
+    logger = utils.get_component(config.logger)
     trainer = Trainer(
         config.trainer.get("scheduler_config", {}),
         config.trainer.get("optimizer_config", {}),
         **config.trainer.get("kwargs", {}),
         accelerator=dlam.DEVICE,
         devices=1,
-        callbacks=get_checkpoint_callbacks(dirpath=ckpt_pth),
+        callbacks=get_checkpoint_callbacks(dirpath=f"{config.path}/checkpoints"),
         log_every_n_steps=1,
+        logger=logger,
     )
 
     if "noise_based_model" in config:
-        noise_model = utils.get_component(config.noise_model, domain=dataset.xy)
+        noise_model = utils.get_component(config.noise_model)
         create_graph = (
             noise_model.create_graph if hasattr(noise_model, "create_graph") else None
         )
