@@ -8,9 +8,10 @@ from dlam import utils
 
 
 class Trainer(pl.Trainer):
-    def __init__(self, scheduler_config=None, optimizer_config=None, *args, **kwargs):
-        self.scheduler_config = scheduler_config or {}
-        self.optimizer_config = optimizer_config or {}
+    def __init__(self, scheduler=None, optimizer=None, *args, **kwargs):
+
+        self.scheduler_config = scheduler or {}
+        self.optimizer_config = optimizer or {}
 
         super().__init__(*args, **kwargs)
 
