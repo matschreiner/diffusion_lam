@@ -6,37 +6,19 @@ from dlam.model.interaction_net import InteractionNet
 from dlam.model.mlp import MLP
 
 
-class Graph(torch.nn.Module):
-    def __init__(self, graph):
-        super().__init__()
-        for key in graph:
-            if len(graph[key]) != 0:
-                self.register_buffer(key, graph[key])
-                graph[key] = getattr(self, key)
-
-    def __getitem__(self, key):
-        if hasattr(self, key):
-            return getattr(self, key)
-        else:
-            raise KeyError(f"Graph does not contain key: {key}")
-
-
 class GraphLAM(pl.LightningModule):
     def __init__(
         self,
-        #  domain,
         in_dim=18,
-        target_dim=2,
+        out_dim=2,
         mesh_dim=2,
         hidden_dim=64,
         edge_dim=3,
         processor_layers=3,
         mp_layers=2,
+        graph=None,
     ):
         super().__init__()
-
-        #  graph = self.create_graph(domain)
-        #  self.graph = Graph(graph)
 
         self.mesh_embedder = MLP(mesh_dim, hidden_dim)
         self.grid_embedder = MLP(in_dim, hidden_dim)
@@ -45,7 +27,7 @@ class GraphLAM(pl.LightningModule):
         self.m2m_embedder = MLP(edge_dim, hidden_dim)
         self.g2m_embedder = MLP(edge_dim, hidden_dim)
         self.m2g_embedder = MLP(edge_dim, hidden_dim)
-        self.readout = MLP(hidden_dim, target_dim, hidden_layers=4)
+        self.readout = MLP(hidden_dim, out_dim, hidden_layers=4)
 
         self.m2g_gnn = InteractionNet(
             input_dim=hidden_dim,
@@ -70,12 +52,18 @@ class GraphLAM(pl.LightningModule):
 
         self.save_hyperparameters()
 
+        if graph:
+            self.create_graph = lambda *args, **kwargs: utils.load_graph(graph)[1]
+
     def forward(self, batch):
         static = batch["static"]
         cond1 = batch["cond"][:, 0]
         cond2 = batch["cond"][:, 1]
-        forcing = batch["forcing"][:, 1]
-        grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
+        grid_features = torch.cat((cond1, cond2, static), dim=-1)
+        graph = batch.graph
+
+        #  forcing = batch["forcing"][:, 1]
+        #  grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
 
         return self._forward(grid_features, graph)
 
@@ -120,6 +108,15 @@ class GraphLAM(pl.LightningModule):
         out = self.forward(batch)
         loss = torch.nn.functional.mse_loss(out, batch.target).mean()
 
+        self.log("loss", loss.mean(), prog_bar=True, logger=True)
+        self.log(
+            "lr",
+            self.trainer.optimizers[0].param_groups[0]["lr"],
+            prog_bar=True,
+            logger=True,
+        )
+        self.log("log_loss", loss.mean().log10(), logger=True)
+
         return loss
 
     def configure_optimizer(self):
@@ -146,15 +143,16 @@ class GraphLAMNoise(GraphLAM):
         static = batch["static"]
         cond1 = batch["cond"][:, 0]
         cond2 = batch["cond"][:, 1]
-        forcing = batch["forcing"][:, 1]
+        graph = batch.graph
 
-        grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
+        #  forcing = batch["forcing"][:, 1]
+        #  grid_features = torch.cat((cond1, cond2, forcing, static), dim=-1)
+        grid_features = torch.cat((cond1, cond2, static), dim=-1)
 
         t_diff = t_diff[:, None, None].expand((-1, grid_features.shape[1], 1))
-
         grid_features = torch.cat([grid_features, batch.corr, t_diff], dim=-1)
+        out = self._forward(grid_features, graph)
 
-        out = self._forward(grid_features, batch.graph)
         return out
 
 
