@@ -1,12 +1,14 @@
+import os
 from functools import lru_cache
 
 import matplotlib.pyplot as plt
 import neural_lam
 import numpy as np
 import torch
-import xarray
 from neural_lam.datastore.mdp import MDPDatastore
 
+import dlam.utils
+import xarray
 from dlam.utils import AttrDict
 from dlam.vis.animate import animate
 
@@ -84,16 +86,80 @@ class WeatherDatasetFromDatastore(neural_lam.weather_dataset.WeatherDataset):
         return AttrDict(item)
 
 
+class WeatherDatasetZarr(torch.utils.data.Dataset):
+    def __init__(self, storage, precision=torch.float32):
+        self.precision = precision
+        data = xarray.open_zarr(os.path.join(storage, "height_levels.zarr")).isel(
+            x=slice(0, 10), y=slice(0, 10)
+        )
+        static = xarray.open_zarr(os.path.join(storage, "static.zarr")).isel(
+            x=slice(0, 10), y=slice(0, 10)
+        )
+        #  data = xarray.open_zarr(os.path.join(storage, "height_levels.zarr"))
+        #  static = xarray.open_zarr(os.path.join(storage, "static.zarr"))
+
+        self.xy = np.stack(
+            np.meshgrid(data.x.values, data.y.values, indexing="ij"), axis=-1
+        )
+
+        del data["danra_projection"]
+        data = data.to_stacked_array("feature", ["time", "x", "y"])
+        self.data = data.stack(dims=["x", "y"])
+
+        self.std = torch.tensor(self.data.values.std(axis=(0, 2))).to(self.precision)
+        self.mean = torch.tensor(self.data.values.mean(axis=(0, 2))).to(self.precision)
+
+        static = static.to_stacked_array("feature", ["x", "y"])
+        self.static = torch.tensor(static.stack(dims=["x", "y"]).values).T.to(
+            self.precision
+        )
+
+        self.static[:, 1] = (
+            self.static[:, 1] - self.static[:, 1].mean()
+        ) / self.static[:, 1].std()
+
+    def __len__(self):
+        return 1
+        #  return len(self.data) - 2
+
+    def __getitem__(self, idx):
+        item = {}
+        item["static"] = self.static
+        item["xy"] = self.xy
+
+        cond1 = torch.tensor(self.data.isel(time=idx).values).T.to(self.precision)
+        cond2 = torch.tensor(self.data.isel(time=idx + 1).values).T.to(self.precision)
+        target = torch.tensor(self.data.isel(time=idx + 2).values).T.to(self.precision)
+
+        cond1 = (cond1 - self.mean) / self.std
+        cond2 = (cond2 - self.mean) / self.std
+        target = (target - self.mean) / self.std
+
+        cond = torch.stack([cond1, cond2], dim=0)
+
+        item["cond"] = cond
+        item["target"] = target
+        if hasattr(self, "graph"):
+            item["graph"] = self.graph
+
+        return dlam.utils.AttrDict(item)
+
+    def add_graph(self, create_graph):
+        self.graph = create_graph(self.xy)
+
+
 if __name__ == "__main__":
-    dataset = WeatherDataset("storage/mini.zarr/")
-    datalist = dataset[:]
-
-    def fn(ax, data):
-        ax.imshow(data.numpy(), cmap="viridis")
-        ax.set_title("t2m")
-
-    ani = animate(
-        datalist,
-        fn,
-    )
-    plt.show()
+    ds = WeatherDatasetZarr("storage")
+    d = ds[0]
+    #  dataset = WeatherDataset("storage/mini.zarr/")
+    #  datalist = dataset[:]
+    #
+    #  def fn(ax, data):
+    #      ax.imshow(data.numpy(), cmap="viridis")
+    #      ax.set_title("t2m")
+    #
+    #  ani = animate(
+    #      datalist,
+    #      fn,
+    #  )
+    #  plt.show()
