@@ -1,9 +1,6 @@
 import os
-from datetime import timedelta
+from dataclasses import dataclass
 from pprint import pprint
-
-import pytorch_lightning as pl
-from torch.utils.data import DataLoader
 
 import dlam
 from dlam import utils
@@ -13,58 +10,30 @@ from dlam.trainer import Trainer
 def main(config):
     pprint(config)
     dataset = utils.get_component(config.dataset)
-    dataloader = DataLoader(dataset, **config.dataloader.get("kwargs", {}))
+    dataloader = utils.get_component(config.dataloader, dataset=dataset)
 
-    logger = utils.get_component(config.logger)
+    logger = utils.get_component(config.logger) if hasattr(config, "logger") else None
     trainer = Trainer(
-        config.trainer.get("scheduler_config", {}),
-        config.trainer.get("optimizer_config", {}),
         **config.trainer.get("kwargs", {}),
         accelerator=dlam.DEVICE,
         devices=1,
-        callbacks=get_checkpoint_callbacks(dirpath=f"{config.path}/checkpoints"),
+        callbacks=dlam.mlops.get_checkpoint_callbacks(
+            dirpath=f"{config.path}/checkpoints"
+        ),
         log_every_n_steps=1,
         logger=logger,
     )
 
-    if "noise_based_model" in config:
-        noise_model = utils.get_component(config.noise_model)
-        create_graph = (
-            noise_model.create_graph if hasattr(noise_model, "create_graph") else None
-        )
-        model = utils.get_component(config.noise_based_model, noise_model=noise_model)
+    model = utils.get_component(config.model)
 
-    elif "model" in config:
-        model = utils.get_component(config.model)
-        create_graph = model.create_graph if hasattr(model, "create_graph") else None
+    create_graph = model.create_graph if hasattr(model, "create_graph") else None
 
-    if create_graph:
+    if hasattr(model, "create_graph"):
         dataset.add_graph(create_graph)
 
     model.to(dlam.DEVICE)
     trainer.fit(model, dataloader)
     os.makedirs("results", exist_ok=True)
-
-
-def get_checkpoint_callbacks(dirpath):
-    loss_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=dirpath,
-        filename="best",
-        monitor="loss",
-        mode="min",
-        save_last=True,
-    )
-
-    timedelta_checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=dirpath,
-        filename="timedelta",
-        train_time_interval=timedelta(seconds=5),
-    )
-
-    return [
-        loss_checkpoint_callback,
-        timedelta_checkpoint_callback,
-    ]
 
 
 if __name__ == "__main__":
@@ -75,6 +44,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = utils.load_yaml(args.train_config)
+
     config.path = os.path.dirname(args.train_config)
 
     main(config)
